@@ -30,8 +30,8 @@ app.include_router(api_router, prefix="/api")
 # Mounted at the bare root (not under /api/v1) per SPEC.md: WS /ws/kitchen
 app.include_router(ws.router)
 
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
 @app.on_event("startup")

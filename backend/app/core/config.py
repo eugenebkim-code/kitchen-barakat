@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
 
+    # Uploaded files (menu/category photos, receipts). Must point at a
+    # Railway Volume mount in production - the container filesystem
+    # otherwise gets wiped on every redeploy, same issue as DATABASE_URL
+    # above. Defaults to a local relative folder for dev.
+    UPLOAD_DIR: str = "uploads"
+
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def assemble_db_connection(cls, v: Any) -> str:
