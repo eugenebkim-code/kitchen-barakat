@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Any, List, Union
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     # Telegram Bot
     BOT_TOKEN: str
-    ADMIN_TELEGRAM_IDS: Union[str, List[int]] = []
+    ADMIN_TELEGRAM_IDS: List[int] = []
     OWNER_CHAT_ID: str = ""
 
     # Security
@@ -28,12 +28,16 @@ class Settings(BaseSettings):
 
     @field_validator("ADMIN_TELEGRAM_IDS", mode="before")
     @classmethod
-    def parse_admin_ids(cls, v: Union[str, List[int]]) -> List[int]:
+    def parse_admin_ids(cls, v: Any) -> List[int]:
+        if isinstance(v, int):
+            return [v]
         if isinstance(v, str):
             if not v.strip():
                 return []
             return [int(x.strip()) for x in v.split(",") if x.strip().isdigit()]
-        return v
+        if isinstance(v, list):
+            return [int(x) for x in v]
+        return []
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
