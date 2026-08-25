@@ -169,6 +169,49 @@ async def toggle_item_availability(
     return item
 
 
+@router.delete("/menu/items/{item_id}")
+async def delete_menu_item(
+    item_id: int,
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = select(MenuItem).where(MenuItem.id == item_id)
+    res = await db.execute(stmt)
+    item = res.scalar_one_or_none()
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    await db.delete(item)
+    await db.commit()
+    return {"status": "deleted", "id": item_id}
+
+
+@router.delete("/menu/categories/{category_id}")
+async def delete_category(
+    category_id: int,
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Deletes the category along with all of its menu items - otherwise they'd
+    be orphaned (category_id set NULL) and become invisible/unmanageable
+    since both the admin and customer menus are grouped by category.
+    """
+    stmt = select(Category).options(selectinload(Category.items)).where(Category.id == category_id)
+    res = await db.execute(stmt)
+    category = res.scalar_one_or_none()
+
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    for item in list(category.items):
+        await db.delete(item)
+    await db.delete(category)
+    await db.commit()
+    return {"status": "deleted", "id": category_id}
+
+
 # Client Analytics
 @router.get("/clients")
 async def get_clients_analytics(

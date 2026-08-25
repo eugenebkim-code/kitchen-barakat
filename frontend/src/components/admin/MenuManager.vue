@@ -69,13 +69,23 @@
 
         <p v-if="categoryError" class="text-xs text-red-600 font-bold">{{ categoryError }}</p>
 
-        <button
-          @click="saveCategory"
-          :disabled="isSavingCategory || !categoryForm.name.trim()"
-          class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-zinc-300 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all"
-        >
-          {{ isSavingCategory ? 'Сохранение...' : 'Сохранить' }}
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            @click="saveCategory"
+            :disabled="isSavingCategory || !categoryForm.name.trim()"
+            class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-zinc-300 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all"
+          >
+            {{ isSavingCategory ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+          <button
+            v-if="categoryForm.id"
+            @click="deleteCategory"
+            :disabled="isSavingCategory"
+            class="px-4 py-2.5 bg-red-50 hover:bg-red-100 disabled:opacity-50 text-red-600 font-bold text-sm rounded-xl active:scale-[0.98] transition-all"
+          >
+            🗑️
+          </button>
+        </div>
       </div>
     </section>
 
@@ -142,13 +152,23 @@
 
         <p v-if="itemError" class="text-xs text-red-600 font-bold">{{ itemError }}</p>
 
-        <button
-          @click="saveItem"
-          :disabled="isSavingItem || !itemForm.name.trim() || !itemForm.price"
-          class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-zinc-300 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all"
-        >
-          {{ isSavingItem ? 'Сохранение...' : 'Сохранить' }}
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            @click="saveItem"
+            :disabled="isSavingItem || !itemForm.name.trim() || !itemForm.price"
+            class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-zinc-300 text-white font-bold text-sm rounded-xl active:scale-[0.98] transition-all"
+          >
+            {{ isSavingItem ? 'Сохранение...' : 'Сохранить' }}
+          </button>
+          <button
+            v-if="itemForm.id"
+            @click="deleteItem"
+            :disabled="isSavingItem"
+            class="px-4 py-2.5 bg-red-50 hover:bg-red-100 disabled:opacity-50 text-red-600 font-bold text-sm rounded-xl active:scale-[0.98] transition-all"
+          >
+            🗑️
+          </button>
+        </div>
       </div>
 
       <div v-if="!isLoading && !categories.length" class="text-center py-8 text-zinc-400 text-xs">
@@ -304,6 +324,34 @@ async function saveCategory() {
   }
 }
 
+async function deleteCategory() {
+  if (!categoryForm.id) return
+  const itemCount = categories.value.find(c => c.id === categoryForm.id)?.items.length || 0
+  const warning = itemCount > 0
+    ? `Удалить категорию "${categoryForm.name}" и все блюда в ней (${itemCount} шт.)?`
+    : `Удалить категорию "${categoryForm.name}"?`
+  if (!confirm(warning)) return
+
+  categoryError.value = ''
+  isSavingCategory.value = true
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/admin/menu/categories/${categoryForm.id}`, {
+      method: 'DELETE',
+      headers: authHeaders()
+    })
+    if (!res.ok) throw new Error('Не удалось удалить категорию')
+
+    showCategoryForm.value = false
+    await fetchMenu()
+  } catch (err) {
+    console.error(err)
+    categoryError.value = err.message || 'Ошибка удаления'
+  } finally {
+    isSavingCategory.value = false
+  }
+}
+
 // --- Item form ---
 const showItemForm = ref(false)
 const itemForm = reactive({ id: null, category_id: null, name: '', description: '', price: null, is_available: true })
@@ -378,6 +426,30 @@ async function saveItem() {
   } catch (err) {
     console.error(err)
     itemError.value = err.message || 'Ошибка сохранения'
+  } finally {
+    isSavingItem.value = false
+  }
+}
+
+async function deleteItem() {
+  if (!itemForm.id) return
+  if (!confirm(`Удалить блюдо "${itemForm.name}"?`)) return
+
+  itemError.value = ''
+  isSavingItem.value = true
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/admin/menu/items/${itemForm.id}`, {
+      method: 'DELETE',
+      headers: authHeaders()
+    })
+    if (!res.ok) throw new Error('Не удалось удалить блюдо')
+
+    showItemForm.value = false
+    await fetchMenu()
+  } catch (err) {
+    console.error(err)
+    itemError.value = err.message || 'Ошибка удаления'
   } finally {
     isSavingItem.value = false
   }
