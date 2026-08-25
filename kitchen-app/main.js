@@ -2,11 +2,15 @@ const { app, BrowserWindow, powerSaveBlocker, ipcMain } = require('electron');
 const path = require('path');
 
 let mainWindow;
+const DEFAULT_ALWAYS_ON_TOP = true;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    fullscreen: true,
-    kiosk: true,
+    width: 1280,
+    height: 800,
+    minWidth: 640,
+    minHeight: 480,
+    resizable: true,
     backgroundColor: '#0a0a0f',
     autoHideMenuBar: true,
     webPreferences: {
@@ -17,16 +21,14 @@ function createWindow() {
   });
 
   mainWindow.setMenuBarVisibility(false);
-  mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  mainWindow.maximize();
+  mainWindow.setAlwaysOnTop(DEFAULT_ALWAYS_ON_TOP, 'screen-saver');
   mainWindow.loadFile('index.html');
 
   // This is a kitchen alert board - the screen must never sleep or the
-  // siren/order alert could go unnoticed.
+  // announcement could go unnoticed.
   powerSaveBlocker.start('prevent-display-sleep');
 
-  // Kiosk mode intentionally blocks normal window controls (Alt+F4, close
-  // button). Keep a hidden keyboard escape hatch alongside the on-screen
-  // buttons for maintenance / updating config.js.
   mainWindow.webContents.on('before-input-event', (_event, input) => {
     if (input.control && input.shift && input.key.toLowerCase() === 'q') {
       app.quit();
@@ -39,15 +41,19 @@ function createWindow() {
 }
 
 ipcMain.on('kitchen-app:minimize', () => {
-  if (!mainWindow) return;
-  // Kiosk mode has to be turned off before the window can actually minimize.
-  mainWindow.setKiosk(false);
-  mainWindow.setFullScreen(false);
-  mainWindow.minimize();
+  mainWindow?.minimize();
 });
 
 ipcMain.on('kitchen-app:quit', () => {
   app.quit();
+});
+
+ipcMain.on('kitchen-app:set-always-on-top', (_event, enabled) => {
+  mainWindow?.setAlwaysOnTop(!!enabled, enabled ? 'screen-saver' : undefined);
+});
+
+ipcMain.handle('kitchen-app:get-always-on-top', () => {
+  return mainWindow ? mainWindow.isAlwaysOnTop() : DEFAULT_ALWAYS_ON_TOP;
 });
 
 app.whenReady().then(createWindow);

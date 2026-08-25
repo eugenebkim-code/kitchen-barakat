@@ -69,6 +69,18 @@
   .control-buttons button:active { transform: scale(0.96); }
   .control-buttons #quit-button:hover { background: rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
 
+  .always-on-top-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #d4d4d8;
+    cursor: pointer;
+    user-select: none;
+  }
+  .always-on-top-toggle input { width: 15px; height: 15px; accent-color: #eab308; cursor: pointer; }
+
   /* ---- Idle screen ---- */
   #idle-screen {
     height: 100%;
@@ -215,6 +227,10 @@
     <span id="connection-dot" class="dot"></span>
     <span id="connection-text">Подключение...</span>
     <span id="clock"></span>
+    <label class="always-on-top-toggle" title="Держать окно поверх всех остальных">
+      <input type="checkbox" id="always-on-top-checkbox" checked />
+      📌 Поверх окон
+    </label>
     <div class="control-buttons">
       <button id="minimize-button" title="Свернуть окно">🗕 Свернуть</button>
       <button id="quit-button" title="Закрыть программу">✕ Закрыть</button>

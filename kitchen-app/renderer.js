@@ -32,6 +32,7 @@ const el = {
   announcement: document.getElementById('announcement'),
   minimizeButton: document.getElementById('minimize-button'),
   quitButton: document.getElementById('quit-button'),
+  alwaysOnTopCheckbox: document.getElementById('always-on-top-checkbox'),
 };
 
 el.minimizeButton.addEventListener('click', () => {
@@ -42,6 +43,14 @@ el.quitButton.addEventListener('click', () => {
   if (confirm('Закрыть программу приёма заказов?')) {
     window.electronAPI?.quitApp();
   }
+});
+
+el.alwaysOnTopCheckbox.addEventListener('change', () => {
+  window.electronAPI?.setAlwaysOnTop(el.alwaysOnTopCheckbox.checked);
+});
+
+window.electronAPI?.getAlwaysOnTop().then((enabled) => {
+  el.alwaysOnTopCheckbox.checked = enabled;
 });
 
 function updateClock() {
