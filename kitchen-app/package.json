@@ -22,6 +22,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "sound-settings.js",
       "index.html",
       "renderer.js",
       "config.js",

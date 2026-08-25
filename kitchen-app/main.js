@@ -1,5 +1,6 @@
 const { app, BrowserWindow, powerSaveBlocker, ipcMain } = require('electron');
 const path = require('path');
+const soundSettings = require('./sound-settings');
 
 let mainWindow;
 const DEFAULT_ALWAYS_ON_TOP = true;
@@ -55,6 +56,12 @@ ipcMain.on('kitchen-app:set-always-on-top', (_event, enabled) => {
 ipcMain.handle('kitchen-app:get-always-on-top', () => {
   return mainWindow ? mainWindow.isAlwaysOnTop() : DEFAULT_ALWAYS_ON_TOP;
 });
+
+ipcMain.handle('kitchen-app:get-sound-settings', () => soundSettings.getResolvedSettings());
+
+ipcMain.handle('kitchen-app:set-sound-preset', (_event, id) => soundSettings.setSelectedPreset(id));
+
+ipcMain.handle('kitchen-app:pick-custom-sound', () => soundSettings.pickAndImportCustomSound(mainWindow));
 
 app.whenReady().then(createWindow);
 

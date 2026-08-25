@@ -33,6 +33,11 @@ const el = {
   minimizeButton: document.getElementById('minimize-button'),
   quitButton: document.getElementById('quit-button'),
   alwaysOnTopCheckbox: document.getElementById('always-on-top-checkbox'),
+  soundSettingsButton: document.getElementById('sound-settings-button'),
+  soundModal: document.getElementById('sound-modal'),
+  soundModalClose: document.getElementById('sound-modal-close'),
+  soundOptions: document.getElementById('sound-options'),
+  uploadSoundButton: document.getElementById('upload-sound-button'),
 };
 
 el.minimizeButton.addEventListener('click', () => {
@@ -215,9 +220,10 @@ function updateQueueBadge() {
   }
 }
 
-// --- Voice announcement (a pre-rendered neural TTS phrase - "У вас новый
-// заказ в Телеграм" - looping until the order is acknowledged, instead of
-// a raw alarm tone or the robotic built-in Windows SAPI voice) ---
+// --- Announcement sound (looping until the order is acknowledged) ---
+// Defaults to a pre-rendered neural TTS phrase ("У вас новый заказ в
+// Телеграм"), but the kitchen can pick a different preset or upload their
+// own mp3/wav via the 🔊 Звук panel - see applySoundState() below.
 
 function startAnnouncing() {
   el.announcement.currentTime = 0;
@@ -237,4 +243,84 @@ el.ackButton.addEventListener('click', () => {
   }
 });
 
-connect();
+// --- Sound settings panel ---
+
+let soundState = null; // { presets, selected, activeFile, customFileName }
+
+function applySoundState(state) {
+  soundState = state;
+  const wasAnnouncing = !el.announcement.paused;
+  el.announcement.src = state.activeFile;
+  if (wasAnnouncing) startAnnouncing();
+  renderSoundOptions();
+}
+
+function renderSoundOptions() {
+  if (!soundState) return;
+  el.soundOptions.innerHTML = '';
+
+  const allOptions = [...soundState.presets];
+  if (soundState.customFileName) {
+    allOptions.push({ id: 'custom', label: '📁 Своя мелодия: ' + soundState.customFileName, file: null });
+  }
+
+  allOptions.forEach((opt) => {
+    const row = document.createElement('div');
+    row.className = 'sound-option' + (soundState.selected === opt.id ? ' selected' : '');
+
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'sound-option';
+    radio.checked = soundState.selected === opt.id;
+    radio.addEventListener('change', async () => {
+      const updated = await window.electronAPI?.setSoundPreset(opt.id);
+      if (updated) applySoundState(updated);
+    });
+
+    const label = document.createElement('span');
+    label.className = 'option-label';
+    label.textContent = opt.label;
+
+    const previewBtn = document.createElement('button');
+    previewBtn.className = 'preview-button';
+    previewBtn.textContent = '▶️ Прослушать';
+    previewBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const src = opt.id === 'custom' ? soundState.activeFile : opt.file;
+      new Audio(src).play().catch((err) => console.error('Preview play failed:', err));
+    });
+
+    row.appendChild(radio);
+    row.appendChild(label);
+    row.appendChild(previewBtn);
+    row.addEventListener('click', (e) => {
+      if (e.target !== radio && e.target !== previewBtn) radio.click();
+    });
+    el.soundOptions.appendChild(row);
+  });
+}
+
+el.soundSettingsButton.addEventListener('click', () => {
+  el.soundModal.classList.remove('hidden');
+});
+
+el.soundModalClose.addEventListener('click', () => {
+  el.soundModal.classList.add('hidden');
+});
+
+el.soundModal.addEventListener('click', (e) => {
+  if (e.target === el.soundModal) el.soundModal.classList.add('hidden');
+});
+
+el.uploadSoundButton.addEventListener('click', async () => {
+  const updated = await window.electronAPI?.pickCustomSound();
+  if (updated) applySoundState(updated);
+});
+
+async function init() {
+  const initialSoundState = await window.electronAPI?.getSoundSettings();
+  if (initialSoundState) applySoundState(initialSoundState);
+  connect();
+}
+
+init();

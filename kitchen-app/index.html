@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data:; connect-src ws: wss: http: https:; media-src 'self';" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data:; connect-src ws: wss: http: https:; media-src 'self' file:;" />
 <title>Kitchen Barakat — Приём заказов</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -80,6 +80,85 @@
     user-select: none;
   }
   .always-on-top-toggle input { width: 15px; height: 15px; accent-color: #eab308; cursor: pointer; }
+
+  /* ---- Sound settings modal ---- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+  .modal-panel {
+    width: min(520px, 90vw);
+    max-height: 80vh;
+    background: #16161d;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h2 { font-size: 22px; font-weight: 800; }
+  .modal-header button {
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: #d4d4d8;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .modal-header button:hover { background: rgba(255, 255, 255, 0.16); }
+
+  .sound-options { display: flex; flex-direction: column; gap: 10px; }
+  .sound-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+  }
+  .sound-option.selected { border-color: #eab308; background: rgba(234, 179, 8, 0.12); }
+  .sound-option input { width: 16px; height: 16px; accent-color: #eab308; cursor: pointer; flex-shrink: 0; }
+  .sound-option .option-label { flex: 1; font-size: 15px; font-weight: 700; }
+  .sound-option .preview-button {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: #d4d4d8;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .sound-option .preview-button:hover { background: rgba(255, 255, 255, 0.14); }
+
+  #upload-sound-button {
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: #d4d4d8;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  #upload-sound-button:hover { border-color: #eab308; color: #eab308; }
 
   /* ---- Idle screen ---- */
   #idle-screen {
@@ -232,8 +311,20 @@
       📌 Поверх окон
     </label>
     <div class="control-buttons">
+      <button id="sound-settings-button" title="Настройки звука оповещения">🔊 Звук</button>
       <button id="minimize-button" title="Свернуть окно">🗕 Свернуть</button>
       <button id="quit-button" title="Закрыть программу">✕ Закрыть</button>
+    </div>
+  </div>
+
+  <div id="sound-modal" class="modal-overlay hidden">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2>Звук оповещения</h2>
+        <button id="sound-modal-close">✕</button>
+      </div>
+      <div id="sound-options" class="sound-options"></div>
+      <button id="upload-sound-button">📁 Загрузить свою мелодию (mp3, wav)</button>
     </div>
   </div>
 
@@ -265,7 +356,7 @@
     <button id="ack-button">✅ Заказ принят / Остановить оповещение</button>
   </div>
 
-  <audio id="announcement" src="sound/announcement.wav" loop></audio>
+  <audio id="announcement" src="sound/preset-voice.wav" loop></audio>
 
   <script src="config.js"></script>
   <script src="renderer.js"></script>
