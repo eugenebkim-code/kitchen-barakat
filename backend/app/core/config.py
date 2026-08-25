@@ -18,28 +18,32 @@ class Settings(BaseSettings):
     CORS_ORIGINS: Union[str, List[str]] = ["*"]
 
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./dev.db"
+    DATABASE_URL: str
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def assemble_db_connection(cls, v: Any) -> str:
+        # No fallback to a local SQLite file here on purpose: the container's
+        # filesystem is wiped on every Railway redeploy, so silently falling
+        # back would look like working, then quietly lose all data (menu,
+        # orders, users) on the next deploy. Fail loudly instead.
         if not v or not isinstance(v, str):
-            return "sqlite+aiosqlite:///./dev.db"
-        
+            raise ValueError("DATABASE_URL is required and must point to a persistent database")
+
         db_url = str(v).strip()
         # Handle quoted strings if any
         if (db_url.startswith('"') and db_url.endswith('"')) or (db_url.startswith("'") and db_url.endswith("'")):
             db_url = db_url[1:-1].strip()
 
         if not db_url:
-            return "sqlite+aiosqlite:///./dev.db"
+            raise ValueError("DATABASE_URL is required and must point to a persistent database")
 
         # Convert Postgres URL provided by Railway to AsyncPG driver
         if db_url.startswith("postgres://"):
             return db_url.replace("postgres://", "postgresql+asyncpg://", 1)
         elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+asyncpg://"):
             return db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-            
+
         return db_url
 
     # Business Defaults
