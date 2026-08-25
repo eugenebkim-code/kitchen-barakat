@@ -12,9 +12,10 @@ FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Minimal Nginx config for Single Page App
 RUN echo 'server { \
     listen 80; \
+    listen [::]:80; \
+    server_name _; \
     location / { \
         root /usr/share/nginx/html; \
         index index.html index.htm; \
@@ -24,4 +25,4 @@ RUN echo 'server { \
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "nginx -g 'daemon off;'"]
