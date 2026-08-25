@@ -11,13 +11,44 @@
 
           <!-- Modal Header -->
           <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-amber-50/70 to-transparent">
-            <h2 class="text-lg font-bold text-zinc-900">Оформление заказа</h2>
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg font-bold text-zinc-900">Оформление заказа</h2>
+              <button
+                type="button"
+                @click="showInfo = !showInfo"
+                aria-label="Как сделать заказ"
+                class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition-colors"
+                :class="showInfo ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700 hover:bg-amber-200'"
+              >
+                i
+              </button>
+            </div>
             <button @click="$emit('close')" class="w-8 h-8 rounded-full bg-zinc-200 hover:bg-zinc-300 text-zinc-600 font-bold flex items-center justify-center transition-colors">
               ✕
             </button>
           </div>
 
           <div class="p-4 overflow-y-auto space-y-5 flex-1">
+            <!-- Info: how to order -->
+            <Transition
+              enter-active-class="transition opacity-0 -translate-y-1 duration-200"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition opacity-100 duration-150"
+              leave-to-class="opacity-0"
+            >
+              <div v-if="showInfo" class="bg-sky-50 border border-sky-200 rounded-2xl p-4 text-sm text-sky-900 space-y-2">
+                <p class="font-bold text-sky-800">Как сделать заказ</p>
+                <ol class="list-decimal list-inside space-y-1.5 leading-snug">
+                  <li>Укажите номер телефона.</li>
+                  <li>Выберите способ получения — доставка или самовывоз.</li>
+                  <li>Если доставка — укажите адрес; к сумме заказа добавится фиксированная стоимость доставки.</li>
+                  <li>Переведите оплату на счёт владельца (Тонджанг) по реквизитам ниже.</li>
+                  <li>Прикрепите скриншот перевода из банковского приложения или фото чека с банкомата.</li>
+                  <li>Нажмите «Подтвердить и отправить» — заказ сразу уйдёт на кухню в работу.</li>
+                </ol>
+              </div>
+            </Transition>
+
             <!-- 1. Delivery / Pickup Switcher -->
             <div class="bg-zinc-100 p-1 rounded-2xl flex font-bold text-sm">
               <button 
@@ -197,6 +228,7 @@ const selectedFile = ref(null)
 const receiptPreview = ref(null)
 const isCopied = ref(false)
 const isSubmitting = ref(false)
+const showInfo = ref(false)
 const submitError = ref('')
 const phoneError = ref('')
 
