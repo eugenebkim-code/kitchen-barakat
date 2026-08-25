@@ -1,17 +1,17 @@
 <template>
-  <div class="min-h-screen bg-zinc-50 pb-12">
+  <div class="min-h-screen bg-zinc-50/50 pb-12">
     <!-- Admin Header -->
-    <header class="bg-zinc-900 text-white sticky top-0 z-30 shadow-md">
+    <header class="bg-zinc-900/90 backdrop-blur-xl text-white sticky top-0 z-30 shadow-lg shadow-black/20">
       <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-xl">👑</span>
+          <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center text-base shadow-md shadow-amber-500/30">👑</span>
           <div>
             <h1 class="font-extrabold text-sm leading-none text-amber-400">Панель Администратора</h1>
             <p class="text-[10px] text-zinc-400 mt-0.5">Управление кухней и клиентами</p>
           </div>
         </div>
 
-        <button 
+        <button
           @click="$emit('close')"
           class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold text-xs rounded-lg active:scale-95 transition-all"
         >
@@ -20,7 +20,7 @@
       </div>
 
       <!-- Admin Tabs Navigation -->
-      <div class="flex overflow-x-auto no-scrollbar border-t border-zinc-800 bg-zinc-900/90 text-xs font-bold px-2 pt-1">
+      <div class="flex overflow-x-auto no-scrollbar border-t border-zinc-800/70 bg-zinc-900/70 text-xs font-bold px-2 pt-1">
         <button
           @click="activeTab = 'dashboard'"
           class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"

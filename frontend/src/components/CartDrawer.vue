@@ -23,12 +23,12 @@
       leave-from-class="translate-y-0"
       leave-to-class="translate-y-full"
     >
-      <div 
-        v-if="isOpen" 
-        class="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden"
+      <div
+        v-if="isOpen"
+        class="fixed inset-x-0 bottom-0 z-50 bg-white/95 backdrop-blur-xl rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl ring-1 ring-white/40 overflow-hidden"
       >
         <!-- Header -->
-        <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+        <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-amber-50/70 to-transparent">
           <div class="flex items-center gap-2">
             <span class="text-xl">🛒</span>
             <h2 class="text-lg font-bold text-zinc-900">Ваша корзина</h2>
@@ -103,9 +103,9 @@
             </div>
           </div>
 
-          <button 
-            @click="$emit('checkout')" 
-            class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          <button
+            @click="$emit('checkout')"
+            class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             <span>Перейти к оформлению</span>
             <span>➔</span>

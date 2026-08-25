@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-6 text-center space-y-6 shadow-xl border border-zinc-100">
-      
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white/95 backdrop-blur-xl w-full max-w-md rounded-3xl p-6 text-center space-y-6 shadow-2xl ring-1 ring-white/50">
+
       <!-- Icon & Status Badge -->
       <div class="relative inline-block">
-        <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-inner">
+        <div class="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 text-white rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-lg shadow-amber-500/40">
           🎉
         </div>
         <span class="absolute -bottom-1 -right-1 bg-emerald-500 text-white rounded-full p-1 text-xs border-2 border-white shadow-sm">
@@ -36,9 +36,9 @@
       </div>
 
       <!-- Action Button -->
-      <button 
+      <button
         @click="$emit('back-to-menu')"
-        class="w-full py-3.5 bg-zinc-900 hover:bg-black text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all text-sm"
+        class="w-full py-3.5 bg-gradient-to-r from-zinc-900 to-zinc-800 hover:from-black hover:to-zinc-900 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all text-sm"
       >
         Вернуться в меню
       </button>

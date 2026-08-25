@@ -7,12 +7,12 @@
       leave-to-class="opacity-0"
     >
       <div v-if="isOpen" class="fixed inset-0 bg-black/70 z-50 overflow-y-auto flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
-          
+        <div class="bg-white/95 backdrop-blur-xl w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl ring-1 ring-white/40">
+
           <!-- Modal Header -->
-          <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
+          <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-amber-50/70 to-transparent">
             <h2 class="text-lg font-bold text-zinc-900">Оформление заказа</h2>
-            <button @click="$emit('close')" class="w-8 h-8 rounded-full bg-zinc-200 text-zinc-600 font-bold flex items-center justify-center">
+            <button @click="$emit('close')" class="w-8 h-8 rounded-full bg-zinc-200 hover:bg-zinc-300 text-zinc-600 font-bold flex items-center justify-center transition-colors">
               ✕
             </button>
           </div>
@@ -82,12 +82,12 @@
             </div>
 
             <!-- 4. Bank Account Payment Details -->
-            <div class="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 space-y-3">
+            <div class="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200/80 rounded-2xl p-4 space-y-3 shadow-sm">
               <div class="flex items-center justify-between border-b border-amber-200/50 pb-2">
                 <span class="text-xs font-bold text-amber-900 uppercase">Реквизиты для перевода</span>
                 <span class="text-xs text-amber-700 font-medium">Банковский перевод</span>
               </div>
-              
+
               <div class="space-y-1 text-sm">
                 <div class="flex justify-between">
                   <span class="text-zinc-600">Банк:</span>
@@ -97,10 +97,10 @@
                   <span class="text-zinc-600">Счет:</span>
                   <div class="flex items-center gap-2">
                     <span class="font-extrabold text-zinc-900 font-mono">{{ userStore.bankDetails.account }}</span>
-                    <button 
-                      type="button" 
-                      @click="copyAccount" 
-                      class="px-2 py-0.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-lg active:scale-95 transition-transform"
+                    <button
+                      type="button"
+                      @click="copyAccount"
+                      class="px-2 py-0.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs rounded-lg shadow-sm shadow-amber-500/30 active:scale-95 transition-all"
                     >
                       {{ isCopied ? 'Скопировано!' : 'Копировать' }}
                     </button>
@@ -112,7 +112,7 @@
                 </div>
                 <div class="flex justify-between pt-2 border-t border-amber-200/50 text-base font-extrabold text-amber-900">
                   <span>Сумма к оплате:</span>
-                  <span class="text-amber-600">{{ cartStore.grandTotal.toLocaleString('ko-KR') }} ₩</span>
+                  <span class="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">{{ cartStore.grandTotal.toLocaleString('ko-KR') }} ₩</span>
                 </div>
               </div>
             </div>
@@ -161,10 +161,10 @@
 
           <!-- Actions -->
           <div class="p-4 bg-zinc-50 border-t border-zinc-100">
-            <button 
+            <button
               @click="submitOrder"
               :disabled="isSubmitting"
-              class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 disabled:bg-zinc-300 text-white font-bold rounded-2xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-zinc-300 disabled:to-zinc-300 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
             >
               <span v-if="isSubmitting" class="animate-spin text-lg">⏳</span>
               <span>{{ isSubmitting ? 'Отправка заказа...' : 'Подтвердить и отправить' }}</span>

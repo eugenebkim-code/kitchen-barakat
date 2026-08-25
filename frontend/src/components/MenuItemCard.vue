@@ -1,16 +1,17 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden flex flex-col justify-between h-full relative">
+  <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-md shadow-black/5 border border-white/60 overflow-hidden flex flex-col justify-between h-full relative transition-all duration-300 hover:shadow-xl hover:shadow-amber-900/10 hover:-translate-y-1">
     <!-- Image -->
     <div class="relative w-full h-36 bg-zinc-100 overflow-hidden">
       <img
         v-if="item.image_url"
         :src="resolveImageUrl(item.image_url)"
         :alt="item.name"
-        class="w-full h-full object-cover"
+        class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
       />
-      <div v-else class="w-full h-full flex items-center justify-center text-zinc-400 text-3xl font-bold bg-zinc-200">
+      <div v-else class="w-full h-full flex items-center justify-center text-zinc-400 text-3xl font-bold bg-gradient-to-br from-zinc-100 to-zinc-200">
         🍲
       </div>
+      <div class="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
     </div>
 
     <!-- Content -->
@@ -25,7 +26,7 @@
       </div>
 
       <div class="mt-2 flex items-center justify-between">
-        <span class="text-amber-600 font-extrabold text-base">
+        <span class="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent font-extrabold text-base">
           {{ item.price.toLocaleString('ko-KR') }} ₩
         </span>
 
@@ -43,7 +44,7 @@
             </span>
             <button
               @click="$emit('add', item)"
-              class="w-7 h-7 flex items-center justify-center rounded-lg bg-amber-500 text-white font-bold shadow-sm active:scale-95 transition-transform"
+              class="w-7 h-7 flex items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white font-bold shadow-sm shadow-amber-500/40 active:scale-95 transition-transform"
             >
               +
             </button>
@@ -52,7 +53,7 @@
           <button
             v-else
             @click="$emit('add', item)"
-            class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-sm active:scale-95 transition-transform flex items-center gap-1"
+            class="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-500/30 active:scale-95 transition-all flex items-center gap-1"
           >
             <span>+</span>
             <span>В корзину</span>
