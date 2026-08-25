@@ -20,38 +20,45 @@
       </div>
 
       <!-- Admin Tabs Navigation -->
-      <div class="flex border-t border-zinc-800 bg-zinc-900/90 text-xs font-bold px-2 pt-1">
+      <div class="flex overflow-x-auto no-scrollbar border-t border-zinc-800 bg-zinc-900/90 text-xs font-bold px-2 pt-1">
+        <button
+          @click="activeTab = 'dashboard'"
+          class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"
+          :class="activeTab === 'dashboard' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
+        >
+          <span>📊 Дашборд</span>
+        </button>
         <button
           @click="activeTab = 'orders'"
-          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"
           :class="activeTab === 'orders' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
           <span>📦 Заказы</span>
         </button>
         <button
           @click="activeTab = 'menu'"
-          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"
           :class="activeTab === 'menu' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
           <span>🍽️ Управление меню</span>
         </button>
-        <button 
+        <button
           @click="activeTab = 'clients'"
-          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"
           :class="activeTab === 'clients' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
           <span>👥 Клиенты</span>
         </button>
         <button
           @click="activeTab = 'broadcast'"
-          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"
           :class="activeTab === 'broadcast' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
           <span>📢 Рассылка</span>
         </button>
         <button
           @click="activeTab = 'hours'"
-          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          class="flex-shrink-0 px-3 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1 whitespace-nowrap"
           :class="activeTab === 'hours' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
           <span>🕐 Время</span>
@@ -61,7 +68,8 @@
 
     <!-- Main Content Area -->
     <main class="max-w-lg mx-auto p-4">
-      <OrdersManager v-if="activeTab === 'orders'" />
+      <DashboardManager v-if="activeTab === 'dashboard'" />
+      <OrdersManager v-else-if="activeTab === 'orders'" />
       <MenuManager v-else-if="activeTab === 'menu'" />
       <ClientAnalytics v-else-if="activeTab === 'clients'" />
       <BroadcastSender v-else-if="activeTab === 'broadcast'" />
@@ -72,6 +80,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import DashboardManager from '../components/admin/DashboardManager.vue'
 import OrdersManager from '../components/admin/OrdersManager.vue'
 import MenuManager from '../components/admin/MenuManager.vue'
 import ClientAnalytics from '../components/admin/ClientAnalytics.vue'
@@ -80,5 +89,5 @@ import WorkingHoursManager from '../components/admin/WorkingHoursManager.vue'
 
 defineEmits(['close'])
 
-const activeTab = ref('orders')
+const activeTab = ref('dashboard')
 </script>

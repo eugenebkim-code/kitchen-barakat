@@ -16,6 +16,7 @@ from app.services.storage import save_image
 from app.services.schedule import compute_kitchen_status, upsert_setting
 from app.services.broadcast import send_broadcast_message, run_mass_broadcast
 from app.services.bot import notify_customer_status_change
+from app.services.dashboard import get_dashboard_stats
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -27,6 +28,15 @@ def verify_admin(current_user: dict = Depends(get_current_tg_user)):
             detail="Admin privileges required"
         )
     return current_user
+
+
+# Dashboard
+@router.get("/dashboard")
+async def get_dashboard(
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    return await get_dashboard_stats(db)
 
 
 # Menu Admin Management
