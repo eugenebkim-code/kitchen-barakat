@@ -46,7 +46,7 @@ async def test_menu_crud(async_client, admin_auth_header, user_auth_header):
     # 1. Create Category
     cat_res = await async_client.post(
         "/api/v1/admin/menu/categories",
-        json={"name": "Супы", "sort_order": 1},
+        data={"name": "Супы", "sort_order": 1},
         headers=admin_auth_header
     )
     assert cat_res.status_code == 200
@@ -55,7 +55,7 @@ async def test_menu_crud(async_client, admin_auth_header, user_auth_header):
     # 2. Create Menu Item
     item_res = await async_client.post(
         "/api/v1/admin/menu/items",
-        json={
+        data={
             "category_id": cat_id,
             "name": "Кимчи тиге",
             "description": "Острый суп с кимчи и свининой",
@@ -102,12 +102,12 @@ async def test_create_order_multipart(async_client, user_auth_header, admin_auth
     Creates an order with multipart receipt upload and verifies DB persistence.
     """
     # Create category & item first
-    c_res = await async_client.post("/api/v1/admin/menu/categories", json={"name": "Сеты"}, headers=admin_auth_header)
+    c_res = await async_client.post("/api/v1/admin/menu/categories", data={"name": "Сеты"}, headers=admin_auth_header)
     c_id = c_res.json()["id"]
 
     i_res = await async_client.post(
         "/api/v1/admin/menu/items",
-        json={"category_id": c_id, "name": "Самгёпсаль сет", "price": 28000},
+        data={"category_id": c_id, "name": "Самгёпсаль сет", "price": 28000},
         headers=admin_auth_header
     )
     menu_item_id = i_res.json()["id"]
@@ -169,10 +169,10 @@ async def test_kitchen_websocket_broadcast(async_client, user_auth_header, admin
     kitchen_manager.active_connections.append(mock_ws)
 
     # Create menu item
-    c_res = await async_client.post("/api/v1/admin/menu/categories", json={"name": "Десерты"}, headers=admin_auth_header)
+    c_res = await async_client.post("/api/v1/admin/menu/categories", data={"name": "Десерты"}, headers=admin_auth_header)
     i_res = await async_client.post(
         "/api/v1/admin/menu/items",
-        json={"category_id": c_res.json()["id"], "name": "Пинсу", "price": 7000},
+        data={"category_id": c_res.json()["id"], "name": "Пинсу", "price": 7000},
         headers=admin_auth_header
     )
 

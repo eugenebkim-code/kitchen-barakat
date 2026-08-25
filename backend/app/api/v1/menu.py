@@ -31,12 +31,13 @@ async def get_menu(db: AsyncSession = Depends(get_db)):
                 "is_available": item.is_available,
                 "category_id": item.category_id,
             }
-            for item in cat.items
+            for item in cat.items if item.is_available
         ]
         menu_response.append({
             "id": cat.id,
             "name": cat.name,
             "sort_order": cat.sort_order,
+            "image_url": cat.image_url,
             "items": items
         })
 

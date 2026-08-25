@@ -28,6 +28,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(64), nullable=False)
     sort_order = Column(Integer, default=0)
+    image_url = Column(Text, nullable=True)
 
     items = relationship("MenuItem", back_populates="category")
 

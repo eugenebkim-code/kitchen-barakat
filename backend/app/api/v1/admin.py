@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
-from typing import List
+from typing import List, Optional
 
 from app.core.database import get_db
 from app.core.security import get_current_tg_user
 from app.models.all_models import Category, MenuItem, User, Order
-from app.schemas.menu import CategoryCreate, MenuItemCreate, MenuItemUpdate
+from app.schemas.menu import CategoryOut, CategoryWithItemsOut, MenuItemOut
 from app.schemas.order import OrderOut, OrderStatusUpdate
+from app.services.storage import save_image
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -24,33 +25,127 @@ def verify_admin(current_user: dict = Depends(get_current_tg_user)):
 
 
 # Menu Admin Management
-@router.post("/menu/categories")
-async def create_category(
-    cat_in: CategoryCreate,
+@router.get("/menu", response_model=List[CategoryWithItemsOut])
+async def admin_get_menu(
     admin: dict = Depends(verify_admin),
     db: AsyncSession = Depends(get_db)
 ):
-    category = Category(name=cat_in.name, sort_order=cat_in.sort_order)
+    """
+    Full, unfiltered menu (including unavailable items) for the admin management UI.
+    """
+    stmt = select(Category).options(selectinload(Category.items)).order_by(Category.sort_order)
+    res = await db.execute(stmt)
+    return res.scalars().all()
+
+
+@router.post("/menu/categories", response_model=CategoryOut)
+async def create_category(
+    name: str = Form(...),
+    sort_order: int = Form(0),
+    image: Optional[UploadFile] = File(None),
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    image_url = await save_image(image, "category") if image else None
+    category = Category(name=name, sort_order=sort_order, image_url=image_url)
     db.add(category)
     await db.commit()
     await db.refresh(category)
-    return {"id": category.id, "name": category.name, "sort_order": category.sort_order}
+    return category
 
 
-@router.post("/menu/items")
-async def create_menu_item(
-    item_in: MenuItemCreate,
+@router.patch("/menu/categories/{category_id}", response_model=CategoryOut)
+async def update_category(
+    category_id: int,
+    name: Optional[str] = Form(None),
+    sort_order: Optional[int] = Form(None),
+    image: Optional[UploadFile] = File(None),
     admin: dict = Depends(verify_admin),
     db: AsyncSession = Depends(get_db)
 ):
-    item = MenuItem(**item_in.model_dump())
+    stmt = select(Category).where(Category.id == category_id)
+    res = await db.execute(stmt)
+    category = res.scalar_one_or_none()
+
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    if name is not None:
+        category.name = name
+    if sort_order is not None:
+        category.sort_order = sort_order
+    if image is not None:
+        category.image_url = await save_image(image, "category")
+
+    await db.commit()
+    await db.refresh(category)
+    return category
+
+
+@router.post("/menu/items", response_model=MenuItemOut)
+async def create_menu_item(
+    name: str = Form(...),
+    price: int = Form(...),
+    category_id: Optional[int] = Form(None),
+    description: Optional[str] = Form(None),
+    is_available: bool = Form(True),
+    image: Optional[UploadFile] = File(None),
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    image_url = await save_image(image, "item") if image else None
+    item = MenuItem(
+        category_id=category_id,
+        name=name,
+        description=description,
+        price=price,
+        image_url=image_url,
+        is_available=is_available,
+    )
     db.add(item)
     await db.commit()
     await db.refresh(item)
-    return {"id": item.id, "name": item.name, "price": item.price, "is_available": item.is_available}
+    return item
 
 
-@router.patch("/menu/items/{item_id}/toggle")
+@router.patch("/menu/items/{item_id}", response_model=MenuItemOut)
+async def update_menu_item(
+    item_id: int,
+    name: Optional[str] = Form(None),
+    price: Optional[int] = Form(None),
+    category_id: Optional[int] = Form(None),
+    description: Optional[str] = Form(None),
+    is_available: Optional[bool] = Form(None),
+    image: Optional[UploadFile] = File(None),
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = select(MenuItem).where(MenuItem.id == item_id)
+    res = await db.execute(stmt)
+    item = res.scalar_one_or_none()
+
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    if name is not None:
+        item.name = name
+    if price is not None:
+        item.price = price
+    if category_id is not None:
+        item.category_id = category_id
+    if description is not None:
+        item.description = description
+    if is_available is not None:
+        item.is_available = is_available
+    if image is not None:
+        item.image_url = await save_image(image, "item")
+
+    await db.commit()
+    await db.refresh(item)
+    return item
+
+
+@router.patch("/menu/items/{item_id}/toggle", response_model=MenuItemOut)
 async def toggle_item_availability(
     item_id: int,
     admin: dict = Depends(verify_admin),
@@ -66,7 +161,7 @@ async def toggle_item_availability(
     item.is_available = not item.is_available
     await db.commit()
     await db.refresh(item)
-    return {"id": item.id, "name": item.name, "is_available": item.is_available}
+    return item
 
 
 # Client Analytics

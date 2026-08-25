@@ -52,16 +52,32 @@
         <span class="text-[10px] opacity-80 uppercase tracking-wider">KST (Корея)</span>
       </div>
 
-      <!-- Category Navigation Tabs -->
-      <div v-if="menuStore.categories.length > 0" class="flex overflow-x-auto px-4 py-2.5 space-x-2 no-scrollbar bg-white">
-        <button 
+      <!-- Category Photo Slider -->
+      <div v-if="menuStore.categories.length > 0" class="flex overflow-x-auto px-4 py-3 gap-3 no-scrollbar bg-white">
+        <button
           v-for="cat in menuStore.categories"
           :key="cat.id"
           @click="menuStore.setActiveCategory(cat.id)"
-          class="px-4 py-2 rounded-xl font-bold text-xs whitespace-nowrap transition-all duration-200"
-          :class="menuStore.activeCategoryId === cat.id ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20 scale-105' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'"
+          class="flex flex-col items-center gap-1.5 flex-shrink-0 w-16"
         >
-          {{ cat.name }}
+          <div
+            class="w-16 h-16 rounded-2xl overflow-hidden bg-zinc-100 flex items-center justify-center border-2 transition-all duration-200"
+            :class="menuStore.activeCategoryId === cat.id ? 'border-amber-500 shadow-md shadow-amber-500/20 scale-105' : 'border-transparent'"
+          >
+            <img
+              v-if="cat.image_url"
+              :src="cat.image_url"
+              :alt="cat.name"
+              class="w-full h-full object-cover"
+            />
+            <span v-else class="text-2xl">🍽️</span>
+          </div>
+          <span
+            class="text-[11px] font-bold text-center leading-tight line-clamp-2"
+            :class="menuStore.activeCategoryId === cat.id ? 'text-amber-600' : 'text-zinc-500'"
+          >
+            {{ cat.name }}
+          </span>
         </button>
       </div>
     </header>

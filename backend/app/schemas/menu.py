@@ -1,25 +1,27 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 
 
-class CategoryCreate(BaseModel):
-    name: str
-    sort_order: Optional[int] = 0
+class MenuItemOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-
-class MenuItemCreate(BaseModel):
+    id: int
     category_id: Optional[int] = None
     name: str
     description: Optional[str] = None
     price: int
     image_url: Optional[str] = None
-    is_available: Optional[bool] = True
+    is_available: bool
 
 
-class MenuItemUpdate(BaseModel):
-    category_id: Optional[int] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    price: Optional[int] = None
+class CategoryOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    sort_order: int
     image_url: Optional[str] = None
-    is_available: Optional[bool] = None
+
+
+class CategoryWithItemsOut(CategoryOut):
+    items: List[MenuItemOut] = []

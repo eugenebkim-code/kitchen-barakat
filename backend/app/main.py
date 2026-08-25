@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.core.database import engine, Base
+from app.core.database import engine, Base, ensure_schema_migrations
 from app.core.seed import seed_db
 from app.api.v1 import api_router
 from app.services.bot import bot
@@ -34,6 +34,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 async def startup_event():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    await ensure_schema_migrations()
     await seed_db()
 
 

@@ -29,11 +29,11 @@
           <span>📦 Заказы</span>
         </button>
         <button
-          @click="activeTab = 'stoplist'"
+          @click="activeTab = 'menu'"
           class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
-          :class="activeTab === 'stoplist' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
+          :class="activeTab === 'menu' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
-          <span>🛑 Стоп-лист</span>
+          <span>🍽️ Управление меню</span>
         </button>
         <button 
           @click="activeTab = 'clients'"
@@ -55,7 +55,7 @@
     <!-- Main Content Area -->
     <main class="max-w-lg mx-auto p-4">
       <OrdersManager v-if="activeTab === 'orders'" />
-      <StopListManager v-else-if="activeTab === 'stoplist'" />
+      <MenuManager v-else-if="activeTab === 'menu'" />
       <ClientAnalytics v-else-if="activeTab === 'clients'" />
       <BroadcastSender v-else-if="activeTab === 'broadcast'" />
     </main>
@@ -65,7 +65,7 @@
 <script setup>
 import { ref } from 'vue'
 import OrdersManager from '../components/admin/OrdersManager.vue'
-import StopListManager from '../components/admin/StopListManager.vue'
+import MenuManager from '../components/admin/MenuManager.vue'
 import ClientAnalytics from '../components/admin/ClientAnalytics.vue'
 import BroadcastSender from '../components/admin/BroadcastSender.vue'
 

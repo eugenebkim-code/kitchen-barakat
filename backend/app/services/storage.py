@@ -6,12 +6,12 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
-async def save_receipt_image(file: UploadFile) -> str:
+async def save_image(file: UploadFile, prefix: str) -> str:
     """
-    Saves uploaded receipt image to local storage directory and returns local relative path or URL.
+    Saves an uploaded image to local storage directory and returns its public path.
     """
-    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
-    filename = f"receipt_{uuid.uuid4().hex}.{ext}"
+    ext = file.filename.split(".")[-1] if file.filename and "." in file.filename else "jpg"
+    filename = f"{prefix}_{uuid.uuid4().hex}.{ext}"
     filepath = os.path.join(UPLOAD_DIR, filename)
 
     contents = await file.read()
@@ -19,3 +19,7 @@ async def save_receipt_image(file: UploadFile) -> str:
         f.write(contents)
 
     return f"/uploads/{filename}"
+
+
+async def save_receipt_image(file: UploadFile) -> str:
+    return await save_image(file, "receipt")

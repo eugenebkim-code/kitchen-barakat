@@ -56,41 +56,6 @@ export const useMenuStore = defineStore('menu', {
 
     setActiveCategory(categoryId) {
       this.activeCategoryId = categoryId
-    },
-
-    // Admin Action: Quick availability toggle
-    async toggleItemAvailability(itemId) {
-      const userStore = useUserStore()
-      try {
-        const headers = {
-          'Authorization': `tma ${userStore.initDataRaw || 'dev'}`
-        }
-
-        const res = await fetch(`${API_BASE}/api/v1/admin/menu/items/${itemId}/toggle`, {
-          method: 'PATCH',
-          headers
-        })
-
-        if (!res.ok) {
-          throw new Error('Не удалось изменить статус блюда')
-        }
-
-        const updatedItem = await res.json()
-
-        // Update local state immediately
-        for (const cat of this.categories) {
-          const item = cat.items.find(i => i.id === itemId)
-          if (item) {
-            item.is_available = updatedItem.is_available
-            break
-          }
-        }
-        return true
-      } catch (err) {
-        console.error('Failed toggle item availability:', err)
-        alert(err.message)
-        return false
-      }
     }
   }
 })
