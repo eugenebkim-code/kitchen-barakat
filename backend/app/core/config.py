@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     ADMIN_TELEGRAM_IDS: Union[str, List[int]] = []
     OWNER_CHAT_ID: str = ""
+    FRONTEND_URL: str = ""
 
     # Security
     KITCHEN_WS_SECRET: str

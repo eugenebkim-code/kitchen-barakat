@@ -1,3 +1,4 @@
+import asyncio
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +8,7 @@ from app.core.config import settings
 from app.core.database import engine, Base, ensure_schema_migrations
 from app.core.seed import seed_db
 from app.api.v1 import api_router
-from app.services.bot import bot
+from app.services.bot import bot, start_bot_polling
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -36,6 +37,7 @@ async def startup_event():
         await conn.run_sync(Base.metadata.create_all)
     await ensure_schema_migrations()
     await seed_db()
+    asyncio.create_task(start_bot_polling())
 
 
 @app.on_event("shutdown")
