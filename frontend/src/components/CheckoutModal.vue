@@ -13,15 +13,21 @@
           <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-amber-50/70 to-transparent">
             <div class="flex items-center gap-2">
               <h2 class="text-lg font-bold text-zinc-900">Оформление заказа</h2>
-              <button
-                type="button"
-                @click="showInfo = !showInfo"
-                aria-label="Как сделать заказ"
-                class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition-colors"
-                :class="showInfo ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700 hover:bg-amber-200'"
-              >
-                i
-              </button>
+              <span class="relative inline-flex w-6 h-6">
+                <span
+                  v-if="!infoSeen"
+                  class="absolute inset-0 rounded-full bg-amber-400 animate-ping"
+                ></span>
+                <button
+                  type="button"
+                  @click="toggleInfo"
+                  aria-label="Как сделать заказ"
+                  class="relative w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition-colors"
+                  :class="showInfo ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700 hover:bg-amber-200'"
+                >
+                  i
+                </button>
+              </span>
             </div>
             <button @click="$emit('close')" class="w-8 h-8 rounded-full bg-zinc-200 hover:bg-zinc-300 text-zinc-600 font-bold flex items-center justify-center transition-colors">
               ✕
@@ -229,6 +235,12 @@ const receiptPreview = ref(null)
 const isCopied = ref(false)
 const isSubmitting = ref(false)
 const showInfo = ref(false)
+const infoSeen = ref(false)
+
+function toggleInfo() {
+  showInfo.value = !showInfo.value
+  infoSeen.value = true
+}
 const submitError = ref('')
 const phoneError = ref('')
 
