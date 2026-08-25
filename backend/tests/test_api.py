@@ -157,6 +157,61 @@ async def test_create_order_multipart(async_client, user_auth_header, admin_auth
 
 
 @pytest.mark.asyncio
+async def test_delete_order(async_client, user_auth_header, admin_auth_header, async_session):
+    """
+    DELETE /api/v1/admin/orders/{order_id}
+    Order and its OrderItem rows are gone from the DB, the order disappears
+    from both the admin order list and the dashboard's revenue/status
+    counts, and deleting again 404s.
+    """
+    c_res = await async_client.post("/api/v1/admin/menu/categories", data={"name": "Супы"}, headers=admin_auth_header)
+    c_id = c_res.json()["id"]
+
+    i_res = await async_client.post(
+        "/api/v1/admin/menu/items",
+        data={"category_id": c_id, "name": "Соллонтан", "price": 12000},
+        headers=admin_auth_header
+    )
+    menu_item_id = i_res.json()["id"]
+
+    dummy_image = b"\xFF\xD8\xFF\xE0\x00\x10JFIF\x00\x01"
+    files = {"receipt_image": ("receipt.jpg", dummy_image, "image/jpeg")}
+    data = {
+        "order_type": "pickup",
+        "phone": "010-1111-2222",
+        "items": json.dumps([{"menu_item_id": menu_item_id, "quantity": 1}])
+    }
+    order_res = await async_client.post("/api/v1/orders", data=data, files=files, headers=user_auth_header)
+    order_id = order_res.json()["order_id"]
+
+    dashboard_before = await async_client.get("/api/v1/admin/dashboard", headers=admin_auth_header)
+    count_before = sum(dashboard_before.json()[k] for k in ("count_accepted", "count_rejected", "count_pending"))
+
+    del_res = await async_client.delete(f"/api/v1/admin/orders/{order_id}", headers=admin_auth_header)
+    assert del_res.status_code == 200
+    assert del_res.json() == {"status": "deleted", "id": order_id}
+
+    # Gone from the DB, items cascade-deleted too
+    stmt = select(Order).where(Order.id == order_id)
+    assert (await async_session.execute(stmt)).scalar_one_or_none() is None
+    stmt_items = select(OrderItem).where(OrderItem.order_id == order_id)
+    assert (await async_session.execute(stmt_items)).scalars().all() == []
+
+    # Gone from the admin order list
+    list_res = await async_client.get("/api/v1/admin/orders", headers=admin_auth_header)
+    assert order_id not in [o["id"] for o in list_res.json()]
+
+    # Dashboard's live status counts no longer include it
+    dashboard_after = await async_client.get("/api/v1/admin/dashboard", headers=admin_auth_header)
+    count_after = sum(dashboard_after.json()[k] for k in ("count_accepted", "count_rejected", "count_pending"))
+    assert count_after == count_before - 1
+
+    # Deleting again 404s
+    redo_res = await async_client.delete(f"/api/v1/admin/orders/{order_id}", headers=admin_auth_header)
+    assert redo_res.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_kitchen_websocket_broadcast(async_client, user_auth_header, admin_auth_header):
     """
     WS /ws/kitchen?token=...

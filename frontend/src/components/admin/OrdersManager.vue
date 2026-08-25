@@ -87,6 +87,17 @@
             </option>
           </select>
         </div>
+
+        <!-- Delete -->
+        <div class="border-t border-zinc-100 pt-3 flex justify-end">
+          <button
+            @click="deleteOrder(order)"
+            :disabled="deletingId === order.id"
+            class="text-red-500 hover:text-red-700 font-bold text-[11px] disabled:opacity-50"
+          >
+            {{ deletingId === order.id ? 'Удаление...' : '🗑️ Удалить заказ' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -102,6 +113,7 @@ const orders = ref([])
 const isLoading = ref(false)
 const error = ref('')
 const updatingId = ref(null)
+const deletingId = ref(null)
 let pollTimer = null
 
 const STATUS_META = {
@@ -208,6 +220,29 @@ async function updateStatus(order, newStatus) {
     alert(err.message)
   } finally {
     updatingId.value = null
+  }
+}
+
+async function deleteOrder(order) {
+  if (!confirm(`Удалить заказ #${order.id} навсегда? Это действие нельзя отменить.`)) return
+  deletingId.value = order.id
+
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/admin/orders/${order.id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `tma ${userStore.initDataRaw || 'dev'}` }
+    })
+
+    if (!res.ok) {
+      throw new Error('Не удалось удалить заказ')
+    }
+
+    orders.value = orders.value.filter(o => o.id !== order.id)
+  } catch (err) {
+    console.error(err)
+    alert(err.message)
+  } finally {
+    deletingId.value = null
   }
 }
 

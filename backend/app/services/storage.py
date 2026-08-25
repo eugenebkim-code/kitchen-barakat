@@ -25,3 +25,17 @@ async def save_image(file: UploadFile, prefix: str) -> str:
 
 async def save_receipt_image(file: UploadFile) -> str:
     return await save_image(file, "receipt")
+
+
+def delete_uploaded_file(public_path: str | None) -> None:
+    """
+    Removes a file previously returned by save_image()/save_receipt_image()
+    (a "/uploads/<name>" public path) from disk, if it exists. Silently
+    ignores missing files/paths outside our own uploads convention.
+    """
+    if not public_path or not public_path.startswith("/uploads/"):
+        return
+    filename = public_path[len("/uploads/"):]
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    if os.path.isfile(filepath):
+        os.remove(filepath)

@@ -12,7 +12,7 @@ from app.schemas.menu import CategoryOut, CategoryWithItemsOut, MenuItemOut
 from app.schemas.order import OrderOut, OrderStatusUpdate
 from app.schemas.settings import ScheduleOut, ScheduleUpdate
 from app.schemas.broadcast import BroadcastPayload
-from app.services.storage import save_image
+from app.services.storage import save_image, delete_uploaded_file
 from app.services.schedule import compute_kitchen_status, upsert_setting
 from app.services.broadcast import send_broadcast_message, run_mass_broadcast
 from app.services.bot import notify_customer_status_change
@@ -292,6 +292,30 @@ async def update_order_status(
         await notify_customer_status_change(telegram_id, order_id, payload.status, order_type)
 
     return order
+
+
+@router.delete("/orders/{order_id}")
+async def delete_order(
+    order_id: int,
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Permanently deletes an order. OrderItem rows cascade-delete at the DB
+    level (ondelete="CASCADE" on order_items.order_id), so no explicit
+    child cleanup is needed here, unlike delete_category above.
+    """
+    stmt = select(Order).where(Order.id == order_id)
+    res = await db.execute(stmt)
+    order = res.scalar_one_or_none()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    delete_uploaded_file(order.payment_screenshot_url)
+    await db.delete(order)
+    await db.commit()
+    return {"status": "deleted", "id": order_id}
 
 
 # Kitchen Working Hours
