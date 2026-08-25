@@ -8,6 +8,7 @@ from app.core.security import get_current_tg_user
 from app.models.all_models import User, Order, OrderItem, MenuItem
 from app.services.storage import save_receipt_image
 from app.services.kitchen_ws import kitchen_manager
+from app.services.bot import notify_owner_new_order
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -136,5 +137,8 @@ async def create_order(
         "screenshot_url": new_order.payment_screenshot_url
     }
     await kitchen_manager.broadcast_order(ws_payload)
+
+    # 7. Notify owner in Telegram with receipt photo & Accept/Reject buttons
+    await notify_owner_new_order(ws_payload, image_url.lstrip("/"))
 
     return {"order_id": new_order.id, "status": "created", "total_amount": total_amount}

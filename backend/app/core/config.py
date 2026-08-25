@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     # Telegram Bot
     BOT_TOKEN: str
-    ADMIN_TELEGRAM_IDS: List[int] = []
+    ADMIN_TELEGRAM_IDS: Union[str, List[int]] = []
     OWNER_CHAT_ID: str = ""
 
     # Security

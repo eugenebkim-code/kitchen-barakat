@@ -6,6 +6,7 @@ from app.core.config import settings
 from app.core.database import engine, Base
 from app.core.seed import seed_db
 from app.api.v1 import api_router
+from app.services.bot import bot, start_bot_polling
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -30,6 +31,12 @@ async def startup_event():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await seed_db()
+    asyncio.create_task(start_bot_polling())
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await bot.session.close()
 
 
 @app.get("/healthcheck")
