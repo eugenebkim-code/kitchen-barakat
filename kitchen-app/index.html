@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data:; connect-src ws: wss: http: https:; media-src 'self';" />
+<title>Kitchen Barakat — Приём заказов</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #0a0a0f;
+    color: #f4f4f5;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ---- Status bar ---- */
+  #status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+    background: rgba(0, 0, 0, 0.35);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    z-index: 100;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #52525b;
+    flex-shrink: 0;
+  }
+  .dot.connected { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+  .dot.connecting { background: #eab308; box-shadow: 0 0 8px #eab308; }
+  .dot.reconnecting { background: #ef4444; box-shadow: 0 0 8px #ef4444; animation: blink 1s infinite; }
+
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  #clock { margin-left: auto; color: #a1a1aa; }
+
+  /* ---- Idle screen ---- */
+  #idle-screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    text-align: center;
+  }
+  #idle-screen .idle-icon { font-size: 96px; opacity: 0.6; }
+  #idle-screen h1 { font-size: 40px; font-weight: 800; color: #71717a; }
+
+  /* ---- Order alert screen ---- */
+  #order-screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 72px 48px 32px;
+    animation: pulse-bg 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-bg {
+    0%, 100% { background: #0a0a0f; }
+    50% { background: #3a0d0d; }
+  }
+
+  .order-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .order-header h1 {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+  }
+  .badge {
+    font-size: 28px;
+    font-weight: 800;
+    padding: 12px 28px;
+    border-radius: 16px;
+  }
+  .badge.delivery { background: #1d4ed8; color: #fff; }
+  .badge.pickup { background: #7c3aed; color: #fff; }
+
+  .order-body {
+    flex: 1;
+    display: flex;
+    gap: 48px;
+    min-height: 0;
+  }
+
+  .order-details {
+    flex: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .detail-row {
+    font-size: 30px;
+    display: flex;
+    gap: 16px;
+    line-height: 1.3;
+  }
+  .detail-row .label {
+    color: #a1a1aa;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .items-list {
+    margin-top: 8px;
+    padding-top: 18px;
+    border-top: 2px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .total-row {
+    margin-top: 8px;
+    padding-top: 18px;
+    border-top: 2px solid rgba(255, 255, 255, 0.15);
+    font-size: 44px;
+    font-weight: 900;
+  }
+  .total-row .label { color: #fca5a5; }
+
+  .order-receipt {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    min-height: 0;
+  }
+  #receipt-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  #queue-badge {
+    align-self: center;
+    margin-top: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fbbf24;
+  }
+
+  #ack-button {
+    margin-top: 24px;
+    padding: 28px;
+    font-size: 32px;
+    font-weight: 900;
+    border: none;
+    border-radius: 20px;
+    background: #16a34a;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(22, 163, 74, 0.4);
+  }
+  #ack-button:active { transform: scale(0.98); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+  <div id="status-bar">
+    <span id="connection-dot" class="dot"></span>
+    <span id="connection-text">Подключение...</span>
+    <span id="clock"></span>
+  </div>
+
+  <div id="idle-screen">
+    <div class="idle-icon">🍳</div>
+    <h1>Ожидание заказов</h1>
+  </div>
+
+  <div id="order-screen" class="hidden">
+    <div class="order-header">
+      <h1>🆕 ЗАКАЗ #<span id="order-id"></span></h1>
+      <div id="order-type-badge" class="badge"></div>
+    </div>
+
+    <div class="order-body">
+      <div class="order-details">
+        <div class="detail-row"><span class="label">Телефон:</span><span id="order-phone"></span></div>
+        <div class="detail-row" id="address-row"><span class="label">Адрес:</span><span id="order-address"></span></div>
+        <div class="detail-row" id="comment-row"><span class="label">Коммент:</span><span id="order-comment"></span></div>
+        <div class="items-list" id="order-items"></div>
+        <div class="detail-row total-row"><span class="label">ИТОГО:</span><span id="order-total"></span></div>
+      </div>
+      <div class="order-receipt">
+        <img id="receipt-img" alt="Чек оплаты" />
+      </div>
+    </div>
+
+    <div id="queue-badge" class="hidden"></div>
+    <button id="ack-button">✅ Заказ принят / Отключить сирену</button>
+  </div>
+
+  <audio id="siren" src="sound/alarm.wav" loop></audio>
+
+  <script src="config.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

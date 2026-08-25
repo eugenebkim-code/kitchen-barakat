@@ -1,7 +1,10 @@
 import json
 import pytest
 from sqlalchemy import select
+from starlette.testclient import TestClient
 from app.models.all_models import User, Order, OrderItem, Category, MenuItem
+from app.core.config import settings
+from app.main import app as fastapi_app
 
 
 @pytest.mark.asyncio
@@ -201,6 +204,32 @@ async def test_kitchen_websocket_broadcast(async_client, user_auth_header, admin
 
     # Clean up
     kitchen_manager.disconnect(mock_ws)
+
+
+def test_kitchen_websocket_real_handshake():
+    """
+    WS /ws/kitchen?token=...
+    Connects through the REAL endpoint (not the mocked connection manager
+    used above) to catch routing/auth regressions the mocked test can't
+    see. This is exactly the kind of bug that let /ws/kitchen end up
+    mounted at /api/v1/ws/kitchen instead of the documented root path
+    without any test noticing.
+    """
+    client = TestClient(fastapi_app)
+
+    # Correct token: the handshake must succeed (no exception).
+    with client.websocket_connect(f"/ws/kitchen?token={settings.KITCHEN_WS_SECRET}"):
+        pass
+
+    # Wrong token: server must reject the handshake.
+    with pytest.raises(Exception):
+        with client.websocket_connect("/ws/kitchen?token=WRONG_TOKEN"):
+            pass
+
+    # Missing token entirely: server must reject the handshake.
+    with pytest.raises(Exception):
+        with client.websocket_connect("/ws/kitchen"):
+            pass
 
 
 @pytest.mark.asyncio

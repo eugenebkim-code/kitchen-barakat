@@ -1,4 +1,4 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, status
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status
 
 from app.core.config import settings
 from app.services.kitchen_ws import kitchen_manager
@@ -9,7 +9,7 @@ router = APIRouter(tags=["WebSocket"])
 @router.websocket("/ws/kitchen")
 async def kitchen_websocket_endpoint(
     websocket: WebSocket,
-    token: str = Query(...)
+    token: str
 ):
     if token != settings.KITCHEN_WS_SECRET:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)

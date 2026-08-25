@@ -1,0 +1,30 @@
+{
+  "name": "kitchen-barakat-desktop",
+  "version": "1.0.0",
+  "description": "Kitchen Barakat - Windows Desktop Alarm Receiver for new orders",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.kitchenbarakat.kitchenapp",
+    "productName": "Kitchen Barakat - Kitchen Display",
+    "win": {
+      "target": "nsis"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "renderer.js",
+      "config.js",
+      "sound/**/*"
+    ]
+  }
+}
