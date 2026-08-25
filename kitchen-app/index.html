@@ -50,6 +50,25 @@
 
   #clock { margin-left: auto; color: #a1a1aa; }
 
+  .control-buttons {
+    display: flex;
+    gap: 8px;
+    margin-left: 20px;
+  }
+  .control-buttons button {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: #d4d4d8;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .control-buttons button:hover { background: rgba(255, 255, 255, 0.12); }
+  .control-buttons button:active { transform: scale(0.96); }
+  .control-buttons #quit-button:hover { background: rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+
   /* ---- Idle screen ---- */
   #idle-screen {
     height: 100%;
@@ -196,6 +215,10 @@
     <span id="connection-dot" class="dot"></span>
     <span id="connection-text">Подключение...</span>
     <span id="clock"></span>
+    <div class="control-buttons">
+      <button id="minimize-button" title="Свернуть окно">🗕 Свернуть</button>
+      <button id="quit-button" title="Закрыть программу">✕ Закрыть</button>
+    </div>
   </div>
 
   <div id="idle-screen">

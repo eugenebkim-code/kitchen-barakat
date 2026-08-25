@@ -55,5 +55,7 @@ you'll actually deploy from — `config.js` gets bundled into the build.
 - If the connection drops, it retries with backoff: 1s, 2s, 5s, then 10s
   from then on. The status dot in the top-left shows connection state.
 - Kiosk mode blocks the usual window controls on purpose (this is meant to
-  stay full-screen on a kitchen display). To close it for maintenance,
-  press **Ctrl+Shift+Q**.
+  stay full-screen on a kitchen display). Use the **🗕 Свернуть** /
+  **✕ Закрыть** buttons in the top-right of the status bar to minimize or
+  quit (quit asks for confirmation first). **Ctrl+Shift+Q** also quits, as
+  a keyboard backup.

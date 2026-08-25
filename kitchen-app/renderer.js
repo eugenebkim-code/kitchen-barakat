@@ -30,7 +30,19 @@ const el = {
   queueBadge: document.getElementById('queue-badge'),
   ackButton: document.getElementById('ack-button'),
   siren: document.getElementById('siren'),
+  minimizeButton: document.getElementById('minimize-button'),
+  quitButton: document.getElementById('quit-button'),
 };
+
+el.minimizeButton.addEventListener('click', () => {
+  window.electronAPI?.minimizeApp();
+});
+
+el.quitButton.addEventListener('click', () => {
+  if (confirm('Закрыть программу приёма заказов?')) {
+    window.electronAPI?.quitApp();
+  }
+});
 
 function updateClock() {
   const now = new Date();
