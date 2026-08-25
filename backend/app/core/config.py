@@ -22,14 +22,22 @@ class Settings(BaseSettings):
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
-    def assemble_db_connection(cls, v: str) -> str:
-        if isinstance(v, str):
-            # Convert Postgres URL provided by Railway to AsyncPG driver
-            if v.startswith("postgres://"):
-                return v.replace("postgres://", "postgresql+asyncpg://", 1)
-            elif v.startswith("postgresql://") and not v.startswith("postgresql+asyncpg://"):
-                return v.replace("postgresql://", "postgresql+asyncpg://", 1)
-        return v
+    def assemble_db_connection(cls, v: Any) -> str:
+        if not v or not isinstance(v, str):
+            return "sqlite+aiosqlite:///./dev.db"
+        
+        db_url = v.strip()
+        # Handle quoted strings if any
+        if (db_url.startswith('"') and db_url.endswith('"')) or (db_url.startswith("'") and db_url.endswith("'")):
+            db_url = db_url[1:-1].strip()
+
+        # Convert Postgres URL provided by Railway to AsyncPG driver
+        if db_url.startswith("postgres://"):
+            return db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+asyncpg://"):
+            return db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            
+        return db_url
 
     # Business Defaults
     DEFAULT_DELIVERY_FEE: int = 3000
