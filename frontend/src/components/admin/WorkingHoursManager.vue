@@ -151,6 +151,12 @@ async function saveSchedule() {
     form.open_time = data.open_time
     form.close_time = data.close_time
     currentIsOpen.value = data.is_open
+
+    // Keep the shared user store (read by the main menu banner) in sync
+    // immediately, instead of waiting for the next full re-auth.
+    userStore.isOpen = data.is_open
+    userStore.openTime = data.open_time
+    userStore.closeTime = data.close_time
   } catch (err) {
     console.error(err)
     error.value = err.message || 'Ошибка сохранения'
