@@ -6,8 +6,8 @@
         <div class="flex items-center gap-2">
           <span class="text-2xl">👨‍🍳</span>
           <div>
-            <h1 class="font-extrabold text-zinc-900 text-lg leading-none">Kitchen App</h1>
-            <p class="text-xs text-zinc-400 mt-0.5">Вкусная кухня в Корее</p>
+            <h1 class="font-extrabold text-zinc-900 text-lg leading-none">Кафе "БАРАКАТ"</h1>
+            <p class="text-xs text-zinc-400 mt-0.5">традиционная узбекская кухня в городе Дунпо, Корея</p>
           </div>
         </div>
 
@@ -47,7 +47,7 @@
               :class="userStore.isOpen ? 'bg-emerald-500' : 'bg-red-500'"
             ></span>
           </span>
-          <span>{{ userStore.isOpen ? 'Кухня открыта • Принимаем заказы' : 'Кухня закрыта • Заказы не принимаются' }}</span>
+          <span>{{ userStore.isOpen ? 'Кухня открыта • Принимаем заказы' : `Кухня закрыта • Приём заказов с ${userStore.openTime} до ${userStore.closeTime}` }}</span>
         </div>
         <span class="text-[10px] opacity-80 uppercase tracking-wider">KST (Корея)</span>
       </div>

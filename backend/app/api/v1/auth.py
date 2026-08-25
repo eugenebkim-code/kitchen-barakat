@@ -7,6 +7,7 @@ from app.core.database import get_db
 from app.core.security import get_current_tg_user
 from app.core.config import settings
 from app.models.all_models import User
+from app.services.schedule import compute_kitchen_status
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -36,10 +37,14 @@ async def telegram_auth(
         await db.commit()
         await db.refresh(user)
 
+    kitchen_status = await compute_kitchen_status(db)
+
     return {
         "user": current_tg_user,
         "settings": {
-            "is_open": True,
+            "is_open": kitchen_status["is_open"],
+            "open_time": kitchen_status["open_time"],
+            "close_time": kitchen_status["close_time"],
             "delivery_fee": settings.DEFAULT_DELIVERY_FEE,
             "bank_details": {
                 "bank": settings.BANK_NAME,

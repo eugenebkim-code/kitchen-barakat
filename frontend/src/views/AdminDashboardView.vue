@@ -42,12 +42,19 @@
         >
           <span>👥 Клиенты</span>
         </button>
-        <button 
+        <button
           @click="activeTab = 'broadcast'"
           class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
           :class="activeTab === 'broadcast' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
         >
           <span>📢 Рассылка</span>
+        </button>
+        <button
+          @click="activeTab = 'hours'"
+          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          :class="activeTab === 'hours' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
+        >
+          <span>🕐 Время</span>
         </button>
       </div>
     </header>
@@ -58,6 +65,7 @@
       <MenuManager v-else-if="activeTab === 'menu'" />
       <ClientAnalytics v-else-if="activeTab === 'clients'" />
       <BroadcastSender v-else-if="activeTab === 'broadcast'" />
+      <WorkingHoursManager v-else-if="activeTab === 'hours'" />
     </main>
   </div>
 </template>
@@ -68,6 +76,7 @@ import OrdersManager from '../components/admin/OrdersManager.vue'
 import MenuManager from '../components/admin/MenuManager.vue'
 import ClientAnalytics from '../components/admin/ClientAnalytics.vue'
 import BroadcastSender from '../components/admin/BroadcastSender.vue'
+import WorkingHoursManager from '../components/admin/WorkingHoursManager.vue'
 
 defineEmits(['close'])
 

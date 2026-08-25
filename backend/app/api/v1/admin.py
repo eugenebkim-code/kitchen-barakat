@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
@@ -10,7 +10,11 @@ from app.core.security import get_current_tg_user
 from app.models.all_models import Category, MenuItem, User, Order
 from app.schemas.menu import CategoryOut, CategoryWithItemsOut, MenuItemOut
 from app.schemas.order import OrderOut, OrderStatusUpdate
+from app.schemas.settings import ScheduleOut, ScheduleUpdate
+from app.schemas.broadcast import BroadcastPayload
 from app.services.storage import save_image
+from app.services.schedule import compute_kitchen_status, upsert_setting
+from app.services.broadcast import send_broadcast_message, run_mass_broadcast
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -228,3 +232,54 @@ async def update_order_status(
     await db.commit()
     await db.refresh(order, attribute_names=["items"])
     return order
+
+
+# Kitchen Working Hours
+@router.get("/settings/schedule", response_model=ScheduleOut)
+async def get_schedule(
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    return await compute_kitchen_status(db)
+
+
+@router.patch("/settings/schedule", response_model=ScheduleOut)
+async def update_schedule(
+    payload: ScheduleUpdate,
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    if payload.open_time is not None or payload.close_time is not None:
+        current = await compute_kitchen_status(db)
+        await upsert_setting(db, "store_schedule", {
+            "open_time": payload.open_time or current["open_time"],
+            "close_time": payload.close_time or current["close_time"],
+        })
+
+    if payload.is_open_override is not None:
+        await upsert_setting(db, "is_open_override", payload.is_open_override)
+
+    await db.commit()
+    return await compute_kitchen_status(db)
+
+
+# Broadcast
+@router.post("/broadcast")
+async def broadcast_message(
+    payload: BroadcastPayload,
+    background_tasks: BackgroundTasks,
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    if payload.target_telegram_id:
+        ok = await send_broadcast_message(payload.target_telegram_id, payload.message_text, payload.image_url)
+        if not ok:
+            raise HTTPException(status_code=502, detail="Failed to send test message")
+        return {"status": "sent"}
+
+    stmt = select(User.telegram_id)
+    res = await db.execute(stmt)
+    telegram_ids = [row[0] for row in res.all()]
+
+    background_tasks.add_task(run_mass_broadcast, telegram_ids, payload.message_text, payload.image_url)
+    return {"status": "started", "target_count": len(telegram_ids)}

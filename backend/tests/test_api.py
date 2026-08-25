@@ -18,7 +18,11 @@ async def test_auth_telegram_success(async_client, admin_auth_header):
     assert "settings" in data
     assert data["user"]["telegram_id"] == 10001
     assert data["user"]["is_admin"] is True
-    assert data["settings"]["is_open"] is True
+    # is_open depends on real wall-clock time vs. the configured schedule,
+    # so only assert its type/shape here, not a specific value
+    assert isinstance(data["settings"]["is_open"], bool)
+    assert data["settings"]["open_time"] == "11:00"
+    assert data["settings"]["close_time"] == "23:00"
     assert data["settings"]["delivery_fee"] == 3000
     assert "bank_details" in data["settings"]
 

@@ -14,6 +14,8 @@ export const useUserStore = defineStore('user', {
     
     // Store Settings
     isOpen: true,
+    openTime: '11:00',
+    closeTime: '23:00',
     deliveryFee: 3000,
     bankDetails: {
       bank: 'KB Kookmin Bank',
@@ -82,6 +84,8 @@ export const useUserStore = defineStore('user', {
         // Save store settings
         if (data.settings) {
           this.isOpen = data.settings.is_open ?? true
+          this.openTime = data.settings.open_time || '11:00'
+          this.closeTime = data.settings.close_time || '23:00'
           this.deliveryFee = data.settings.delivery_fee ?? 3000
           if (data.settings.bank_details) {
             this.bankDetails = data.settings.bank_details
