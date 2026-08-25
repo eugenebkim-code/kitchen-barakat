@@ -26,10 +26,13 @@ class Settings(BaseSettings):
         if not v or not isinstance(v, str):
             return "sqlite+aiosqlite:///./dev.db"
         
-        db_url = v.strip()
+        db_url = str(v).strip()
         # Handle quoted strings if any
         if (db_url.startswith('"') and db_url.endswith('"')) or (db_url.startswith("'") and db_url.endswith("'")):
             db_url = db_url[1:-1].strip()
+
+        if not db_url:
+            return "sqlite+aiosqlite:///./dev.db"
 
         # Convert Postgres URL provided by Railway to AsyncPG driver
         if db_url.startswith("postgres://"):

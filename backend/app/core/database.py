@@ -2,8 +2,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from sqlalchemy.orm import DeclarativeBase
 from app.core.config import settings
 
+db_url = settings.DATABASE_URL
+if not db_url or "://" not in db_url:
+    db_url = "sqlite+aiosqlite:///./dev.db"
+
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    db_url,
     echo=settings.DEBUG,
     future=True
 )
