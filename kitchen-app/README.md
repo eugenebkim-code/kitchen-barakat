@@ -2,7 +2,8 @@
 
 Standalone Electron desktop app for the kitchen. Connects to the backend's
 `/ws/kitchen` WebSocket, and shows a full-screen, high-contrast alert with a
-looping siren whenever a new order comes in.
+looping voice announcement ("У вас новый заказ в Телеграм") whenever a new
+order comes in.
 
 ## Setup
 
@@ -47,11 +48,17 @@ you'll actually deploy from — `config.js` gets bundled into the build.
 ## Using it
 
 - The app launches full-screen in kiosk mode and connects automatically.
-- A new order plays the alarm on loop and shows order details (phone,
+- A new order plays a spoken announcement on loop
+  (`sound/announcement.wav` — pre-rendered with a neural TTS voice, not
+  the robotic built-in Windows one) and shows order details (phone,
   address, comment, items, total, receipt screenshot) until the kitchen
-  clicks **"Заказ принят / Отключить сирену"**.
-- Multiple orders queue up; acknowledging one shows the next (siren keeps
-  going until the queue is empty).
+  clicks **"Заказ принят / Остановить оповещение"**.
+- Multiple orders queue up; acknowledging one shows the next (the
+  announcement keeps looping until the queue is empty).
+- To change the phrase: regenerate `sound/announcement.wav` with
+  [Piper TTS](https://github.com/rhasspy/piper) (`pip install piper-tts`,
+  download a `ru_RU-*` voice model, then
+  `echo "your text" | python -m piper -m <model>.onnx -f sound/announcement.wav`).
 - If the connection drops, it retries with backoff: 1s, 2s, 5s, then 10s
   from then on. The status dot in the top-left shows connection state.
 - Kiosk mode blocks the usual window controls on purpose (this is meant to

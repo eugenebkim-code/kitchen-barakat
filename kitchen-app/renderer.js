@@ -29,7 +29,7 @@ const el = {
   receiptImg: document.getElementById('receipt-img'),
   queueBadge: document.getElementById('queue-badge'),
   ackButton: document.getElementById('ack-button'),
-  siren: document.getElementById('siren'),
+  announcement: document.getElementById('announcement'),
   minimizeButton: document.getElementById('minimize-button'),
   quitButton: document.getElementById('quit-button'),
 };
@@ -125,7 +125,7 @@ function enqueueOrder(order) {
   } else {
     updateQueueBadge();
   }
-  playSiren();
+  startAnnouncing();
 }
 
 function showNextOrder() {
@@ -135,7 +135,7 @@ function showNextOrder() {
   if (!currentOrder) {
     el.idleScreen.classList.remove('hidden');
     el.orderScreen.classList.add('hidden');
-    stopSiren();
+    stopAnnouncing();
     return;
   }
 
@@ -206,21 +206,25 @@ function updateQueueBadge() {
   }
 }
 
-function playSiren() {
-  el.siren.currentTime = 0;
-  el.siren.play().catch((err) => console.error('Audio play failed:', err));
+// --- Voice announcement (a pre-rendered neural TTS phrase - "У вас новый
+// заказ в Телеграм" - looping until the order is acknowledged, instead of
+// a raw alarm tone or the robotic built-in Windows SAPI voice) ---
+
+function startAnnouncing() {
+  el.announcement.currentTime = 0;
+  el.announcement.play().catch((err) => console.error('Announcement audio play failed:', err));
 }
 
-function stopSiren() {
-  el.siren.pause();
-  el.siren.currentTime = 0;
+function stopAnnouncing() {
+  el.announcement.pause();
+  el.announcement.currentTime = 0;
 }
 
 el.ackButton.addEventListener('click', () => {
-  stopSiren();
+  stopAnnouncing();
   showNextOrder();
   if (currentOrder) {
-    playSiren();
+    startAnnouncing();
   }
 });
 
