@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
+import { API_BASE } from '../config'
 
 export const useMenuStore = defineStore('menu', {
   state: () => ({
@@ -34,7 +35,7 @@ export const useMenuStore = defineStore('menu', {
           headers['Authorization'] = `tma ${userStore.initDataRaw}`
         }
 
-        const response = await fetch('/api/v1/menu', { headers })
+        const response = await fetch(`${API_BASE}/api/v1/menu`, { headers })
         if (!response.ok) {
           throw new Error(`Failed to load menu: ${response.status}`)
         }
@@ -65,7 +66,7 @@ export const useMenuStore = defineStore('menu', {
           'Authorization': `tma ${userStore.initDataRaw || 'dev'}`
         }
 
-        const res = await fetch(`/api/v1/admin/menu/items/${itemId}/toggle`, {
+        const res = await fetch(`${API_BASE}/api/v1/admin/menu/items/${itemId}/toggle`, {
           method: 'PATCH',
           headers
         })

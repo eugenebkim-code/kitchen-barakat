@@ -57,6 +57,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '../../stores/user'
+import { API_BASE } from '../../config'
 
 const userStore = useUserStore()
 const clients = ref([])
@@ -72,7 +73,7 @@ async function fetchClients() {
   error.value = ''
 
   try {
-    const res = await fetch('/api/v1/admin/clients', {
+    const res = await fetch(`${API_BASE}/api/v1/admin/clients`, {
       headers: {
         'Authorization': `tma ${userStore.initDataRaw || 'dev'}`
       }

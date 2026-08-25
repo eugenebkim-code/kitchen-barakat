@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { API_BASE } from '../config'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -54,7 +55,7 @@ export const useUserStore = defineStore('user', {
         }
 
         // Validate HMAC signature & fetch profile + settings from backend
-        const response = await fetch('/api/v1/auth/telegram', {
+        const response = await fetch(`${API_BASE}/api/v1/auth/telegram`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

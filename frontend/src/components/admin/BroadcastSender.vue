@@ -65,6 +65,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useUserStore } from '../../stores/user'
+import { API_BASE } from '../../config'
 
 const userStore = useUserStore()
 
@@ -83,7 +84,7 @@ async function sendTestBroadcast() {
   isSending.value = true
 
   try {
-    const res = await fetch('/api/v1/admin/broadcast', {
+    const res = await fetch(`${API_BASE}/api/v1/admin/broadcast`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ async function startMassBroadcast() {
   isSending.value = true
 
   try {
-    const res = await fetch('/api/v1/admin/broadcast', {
+    const res = await fetch(`${API_BASE}/api/v1/admin/broadcast`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

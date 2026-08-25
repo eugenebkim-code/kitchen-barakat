@@ -181,6 +181,7 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useCartStore } from '../stores/cart'
+import { API_BASE } from '../config'
 
 const props = defineProps({
   isOpen: Boolean
@@ -307,7 +308,7 @@ async function submitOrder() {
     formData.append('items', JSON.stringify(itemsPayload))
     formData.append('receipt_image', selectedFile.value)
 
-    const response = await fetch('/api/v1/orders', {
+    const response = await fetch(`${API_BASE}/api/v1/orders`, {
       method: 'POST',
       headers: {
         'Authorization': `tma ${userStore.initDataRaw}`
