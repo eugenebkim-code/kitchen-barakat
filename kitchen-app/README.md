@@ -53,11 +53,15 @@ you'll actually deploy from — `config.js` gets bundled into the build.
   until the kitchen clicks **"Заказ принят / Остановить оповещение"**.
 - Multiple orders queue up; acknowledging one shows the next (the sound
   keeps looping until the queue is empty).
-- **🔊 Звук** in the status bar opens the sound picker: three built-in
-  presets (a neural-TTS voice announcement, a bell chime, a classic
-  siren — each has a ▶️ preview), or **📁 Загрузить свою мелодию** to pick
-  any local mp3/wav/ogg/m4a file. The choice is copied into the app's
-  user-data folder and persists across restarts.
+- **🔊 Звук** in the status bar opens the sound picker: five built-in
+  presets — a neural-TTS voice announcement, a bell, a siren, an urgent
+  tone, and a doorbell (each has a ▶️ preview) — or **📁 Загрузить свою
+  мелодию** to pick any local mp3/wav/ogg/m4a file. The choice is copied
+  into the app's user-data folder and persists across restarts.
+  - The bell, siren, urgent tone, and doorbell are free sound effects
+    from [Mixkit](https://mixkit.co/free-sound-effects/) (Mixkit
+    License: free for commercial and personal use, no attribution
+    required).
   - To change the built-in voice phrase: regenerate
     `sound/preset-voice.wav` with [Piper TTS](https://github.com/rhasspy/piper)
     (`pip install piper-tts`, download a `ru_RU-*` voice model, then

@@ -7,6 +7,8 @@ const PRESETS = [
   { id: 'voice', label: 'Голос: «У вас новый заказ»', file: 'sound/preset-voice.wav' },
   { id: 'bell', label: 'Колокольчик', file: 'sound/preset-bell.wav' },
   { id: 'siren', label: 'Сирена', file: 'sound/preset-siren.wav' },
+  { id: 'urgent', label: 'Тревожный сигнал', file: 'sound/preset-urgent.wav' },
+  { id: 'doorbell', label: 'Дверной звонок', file: 'sound/preset-doorbell.wav' },
 ];
 
 function settingsFilePath() {
