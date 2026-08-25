@@ -52,9 +52,9 @@
             class="pt-3 first:pt-0 flex items-center justify-between gap-3"
           >
             <div class="flex items-center gap-3 flex-1 min-w-0">
-              <img 
-                v-if="item.image_url" 
-                :src="item.image_url" 
+              <img
+                v-if="item.image_url"
+                :src="resolveImageUrl(item.image_url)"
                 class="w-12 h-12 rounded-xl object-cover bg-zinc-100 flex-shrink-0"
               />
               <div class="min-w-0">
@@ -118,6 +118,7 @@
 
 <script setup>
 import { useCartStore } from '../stores/cart'
+import { resolveImageUrl } from '../config'
 
 defineProps({
   isOpen: Boolean

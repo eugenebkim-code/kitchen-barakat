@@ -66,7 +66,7 @@
           >
             <img
               v-if="cat.image_url"
-              :src="cat.image_url"
+              :src="resolveImageUrl(cat.image_url)"
               :alt="cat.name"
               class="w-full h-full object-cover"
             />
@@ -147,6 +147,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useMenuStore } from '../stores/menu'
 import { useCartStore } from '../stores/cart'
+import { resolveImageUrl } from '../config'
 import MenuItemCard from '../components/MenuItemCard.vue'
 import CartDrawer from '../components/CartDrawer.vue'
 import CheckoutModal from '../components/CheckoutModal.vue'

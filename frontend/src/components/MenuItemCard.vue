@@ -4,7 +4,7 @@
     <div class="relative w-full h-36 bg-zinc-100 overflow-hidden">
       <img
         v-if="item.image_url"
-        :src="item.image_url"
+        :src="resolveImageUrl(item.image_url)"
         :alt="item.name"
         class="w-full h-full object-cover"
       />
@@ -19,7 +19,7 @@
         <h3 class="font-bold text-zinc-900 text-sm leading-tight line-clamp-1 mb-1">
           {{ item.name }}
         </h3>
-        <p v-if="item.description" class="text-xs text-zinc-500 line-clamp-2 mb-2 leading-relaxed">
+        <p v-if="item.description" class="text-xs text-zinc-500 line-clamp-3 mb-2 leading-relaxed">
           {{ item.description }}
         </p>
       </div>
@@ -64,6 +64,8 @@
 </template>
 
 <script setup>
+import { resolveImageUrl } from '../config'
+
 defineProps({
   item: {
     type: Object,

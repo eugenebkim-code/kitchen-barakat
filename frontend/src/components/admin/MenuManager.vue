@@ -28,7 +28,7 @@
           class="flex flex-col items-center gap-1"
         >
           <div class="w-full aspect-square rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200 relative">
-            <img v-if="cat.image_url" :src="imgSrc(cat.image_url)" class="w-full h-full object-cover" />
+            <img v-if="cat.image_url" :src="resolveImageUrl(cat.image_url)" class="w-full h-full object-cover" />
             <div v-else class="w-full h-full flex items-center justify-center text-2xl">🍽️</div>
             <span class="absolute bottom-1 right-1 bg-white/90 rounded-lg w-5 h-5 flex items-center justify-center text-[10px]">✏️</span>
           </div>
@@ -169,7 +169,7 @@
         <div class="divide-y divide-zinc-100">
           <div v-for="item in cat.items" :key="item.id" class="py-3 first:pt-0 last:pb-0 flex items-center gap-3">
             <div class="w-11 h-11 rounded-xl overflow-hidden bg-zinc-100 flex-shrink-0 flex items-center justify-center">
-              <img v-if="item.image_url" :src="imgSrc(item.image_url)" class="w-full h-full object-cover" />
+              <img v-if="item.image_url" :src="resolveImageUrl(item.image_url)" class="w-full h-full object-cover" />
               <span v-else class="text-lg">🍲</span>
             </div>
 
@@ -208,17 +208,13 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '../../stores/user'
-import { API_BASE } from '../../config'
+import { API_BASE, resolveImageUrl } from '../../config'
 
 const userStore = useUserStore()
 
 const categories = ref([])
 const isLoading = ref(false)
 const error = ref('')
-
-function imgSrc(path) {
-  return `${API_BASE}${path}`
-}
 
 function authHeaders() {
   return { 'Authorization': `tma ${userStore.initDataRaw || 'dev'}` }
@@ -263,7 +259,7 @@ function openEditCategory(cat) {
   categoryForm.name = cat.name
   categoryForm.sort_order = cat.sort_order
   categoryFile.value = null
-  categoryPreview.value = cat.image_url ? imgSrc(cat.image_url) : ''
+  categoryPreview.value = cat.image_url ? resolveImageUrl(cat.image_url) : ''
   categoryError.value = ''
   showCategoryForm.value = true
 }
@@ -339,7 +335,7 @@ function openEditItem(item, categoryId) {
   itemForm.price = item.price
   itemForm.is_available = item.is_available
   itemFile.value = null
-  itemPreview.value = item.image_url ? imgSrc(item.image_url) : ''
+  itemPreview.value = item.image_url ? resolveImageUrl(item.image_url) : ''
   itemError.value = ''
   showItemForm.value = true
 }
