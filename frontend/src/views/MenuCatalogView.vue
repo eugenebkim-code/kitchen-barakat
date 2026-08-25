@@ -4,7 +4,7 @@
     <header class="bg-white/75 backdrop-blur-xl sticky top-0 z-30 shadow-sm shadow-black/5 border-b border-white/60">
       <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-xl shadow-md shadow-amber-500/30">👨‍🍳</span>
+          <img src="/images/logo-barakat.png" alt="Barakat Cafe" class="w-10 h-10 rounded-full object-cover shadow-md shadow-emerald-900/20" />
           <div>
             <h1 class="font-extrabold text-zinc-900 text-lg leading-none tracking-tight">Кафе "БАРАКАТ"</h1>
             <p class="text-xs text-zinc-500 mt-0.5">традиционная узбекская кухня в городе Дунпо, Корея</p>
