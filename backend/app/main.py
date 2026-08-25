@@ -1,12 +1,13 @@
-import asyncio
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.core.seed import seed_db
 from app.api.v1 import api_router
-from app.services.bot import bot, start_bot_polling
+from app.services.bot import bot
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -25,13 +26,15 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api")
 
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 
 @app.on_event("startup")
 async def startup_event():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await seed_db()
-    asyncio.create_task(start_bot_polling())
 
 
 @app.on_event("shutdown")

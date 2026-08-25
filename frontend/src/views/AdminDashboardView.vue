@@ -21,7 +21,14 @@
 
       <!-- Admin Tabs Navigation -->
       <div class="flex border-t border-zinc-800 bg-zinc-900/90 text-xs font-bold px-2 pt-1">
-        <button 
+        <button
+          @click="activeTab = 'orders'"
+          class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
+          :class="activeTab === 'orders' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
+        >
+          <span>📦 Заказы</span>
+        </button>
+        <button
           @click="activeTab = 'stoplist'"
           class="flex-1 py-2.5 text-center border-b-2 transition-all flex items-center justify-center gap-1"
           :class="activeTab === 'stoplist' ? 'border-amber-400 text-amber-400' : 'border-transparent text-zinc-400'"
@@ -47,7 +54,8 @@
 
     <!-- Main Content Area -->
     <main class="max-w-lg mx-auto p-4">
-      <StopListManager v-if="activeTab === 'stoplist'" />
+      <OrdersManager v-if="activeTab === 'orders'" />
+      <StopListManager v-else-if="activeTab === 'stoplist'" />
       <ClientAnalytics v-else-if="activeTab === 'clients'" />
       <BroadcastSender v-else-if="activeTab === 'broadcast'" />
     </main>
@@ -56,11 +64,12 @@
 
 <script setup>
 import { ref } from 'vue'
+import OrdersManager from '../components/admin/OrdersManager.vue'
 import StopListManager from '../components/admin/StopListManager.vue'
 import ClientAnalytics from '../components/admin/ClientAnalytics.vue'
 import BroadcastSender from '../components/admin/BroadcastSender.vue'
 
 defineEmits(['close'])
 
-const activeTab = ref('stoplist')
+const activeTab = ref('orders')
 </script>

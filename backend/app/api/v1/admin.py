@@ -2,12 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
+from sqlalchemy.orm import selectinload
 from typing import List
 
 from app.core.database import get_db
 from app.core.security import get_current_tg_user
 from app.models.all_models import Category, MenuItem, User, Order
 from app.schemas.menu import CategoryCreate, MenuItemCreate, MenuItemUpdate
+from app.schemas.order import OrderOut, OrderStatusUpdate
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -100,3 +102,34 @@ async def get_clients_analytics(
         })
 
     return clients_data
+
+
+# Orders Management
+@router.get("/orders", response_model=List[OrderOut])
+async def list_orders(
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = select(Order).options(selectinload(Order.items)).order_by(Order.created_at.desc())
+    res = await db.execute(stmt)
+    return res.scalars().all()
+
+
+@router.patch("/orders/{order_id}/status", response_model=OrderOut)
+async def update_order_status(
+    order_id: int,
+    payload: OrderStatusUpdate,
+    admin: dict = Depends(verify_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = select(Order).options(selectinload(Order.items)).where(Order.id == order_id)
+    res = await db.execute(stmt)
+    order = res.scalar_one_or_none()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order.status = payload.status
+    await db.commit()
+    await db.refresh(order, attribute_names=["items"])
+    return order

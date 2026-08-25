@@ -138,7 +138,7 @@ async def create_order(
     }
     await kitchen_manager.broadcast_order(ws_payload)
 
-    # 7. Notify owner in Telegram with receipt photo & Accept/Reject buttons
-    await notify_owner_new_order(ws_payload, image_url.lstrip("/"))
+    # 7. Notify owner in Telegram with a text summary
+    await notify_owner_new_order(ws_payload)
 
     return {"order_id": new_order.id, "status": "created", "total_amount": total_amount}
