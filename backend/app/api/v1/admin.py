@@ -15,6 +15,7 @@ from app.schemas.broadcast import BroadcastPayload
 from app.services.storage import save_image
 from app.services.schedule import compute_kitchen_status, upsert_setting
 from app.services.broadcast import send_broadcast_message, run_mass_broadcast
+from app.services.bot import notify_customer_status_change
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -221,7 +222,7 @@ async def update_order_status(
     admin: dict = Depends(verify_admin),
     db: AsyncSession = Depends(get_db)
 ):
-    stmt = select(Order).options(selectinload(Order.items)).where(Order.id == order_id)
+    stmt = select(Order).options(selectinload(Order.items), selectinload(Order.user)).where(Order.id == order_id)
     res = await db.execute(stmt)
     order = res.scalar_one_or_none()
 
@@ -229,8 +230,14 @@ async def update_order_status(
         raise HTTPException(status_code=404, detail="Order not found")
 
     order.status = payload.status
+    telegram_id = order.user.telegram_id if order.user else None
+    order_type = order.order_type
     await db.commit()
     await db.refresh(order, attribute_names=["items"])
+
+    if telegram_id:
+        await notify_customer_status_change(telegram_id, order_id, payload.status, order_type)
+
     return order
 
 
