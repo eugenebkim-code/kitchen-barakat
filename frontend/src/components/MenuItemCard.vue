@@ -25,8 +25,8 @@
         </p>
       </div>
 
-      <div class="mt-2 flex items-center justify-between">
-        <span class="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent font-extrabold text-base">
+      <div class="mt-2 flex items-center justify-between gap-1.5">
+        <span class="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent font-extrabold text-sm whitespace-nowrap">
           {{ item.price.toLocaleString('ko-KR') }} ₩
         </span>
 
@@ -35,16 +35,16 @@
           <div v-if="cartQuantity > 0" class="flex items-center bg-amber-50 rounded-xl border border-amber-200 p-0.5">
             <button
               @click="$emit('remove', item.id)"
-              class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-amber-700 font-bold shadow-sm active:scale-95 transition-transform"
+              class="w-6 h-6 flex items-center justify-center rounded-lg bg-white text-amber-700 font-bold text-sm shadow-sm active:scale-95 transition-transform"
             >
               -
             </button>
-            <span class="px-2 text-sm font-bold text-amber-900 min-w-[20px] text-center">
+            <span class="px-1.5 text-xs font-bold text-amber-900 min-w-[18px] text-center">
               {{ cartQuantity }}
             </span>
             <button
               @click="$emit('add', item)"
-              class="w-7 h-7 flex items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white font-bold shadow-sm shadow-amber-500/40 active:scale-95 transition-transform"
+              class="w-6 h-6 flex items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white font-bold text-sm shadow-sm shadow-amber-500/40 active:scale-95 transition-transform"
             >
               +
             </button>
@@ -53,7 +53,7 @@
           <button
             v-else
             @click="$emit('add', item)"
-            class="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-500/30 active:scale-95 transition-all flex items-center gap-1"
+            class="px-2 py-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-[11px] rounded-lg shadow-md shadow-amber-500/30 active:scale-95 transition-all flex items-center gap-0.5 whitespace-nowrap"
           >
             <span>+</span>
             <span>{{ t('item.addToCart') }}</span>
