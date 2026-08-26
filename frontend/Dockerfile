@@ -19,10 +19,15 @@ RUN echo 'server { \
     listen 80; \
     listen [::]:80; \
     server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html index.htm; \
     location / { \
-        root /usr/share/nginx/html; \
-        index index.html index.htm; \
         try_files $uri $uri/ /index.html; \
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always; \
+    } \
+    location /assets/ { \
+        try_files $uri =404; \
+        add_header Cache-Control "public, max-age=31536000, immutable" always; \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
