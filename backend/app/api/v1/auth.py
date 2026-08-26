@@ -36,11 +36,27 @@ async def telegram_auth(
         db.add(user)
         await db.commit()
         await db.refresh(user)
+    else:
+        user.username = current_tg_user.get("username")
+        user.first_name = current_tg_user.get("first_name")
+        user.last_name = current_tg_user.get("last_name")
+        user.is_admin = current_tg_user.get("is_admin", False)
+        await db.commit()
 
     kitchen_status = await compute_kitchen_status(db)
 
     return {
-        "user": current_tg_user,
+        "user": {
+            "id": user.id,
+            "telegram_id": user.telegram_id,
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "phone": user.phone,
+            "saved_address": user.saved_address,
+            "last_delivery_type": user.last_delivery_type,
+            "is_admin": user.is_admin,
+        },
         "settings": {
             "is_open": kitchen_status["is_open"],
             "open_time": kitchen_status["open_time"],
