@@ -31,9 +31,9 @@
         <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-amber-50/70 to-transparent">
           <div class="flex items-center gap-2">
             <span class="text-xl">🛒</span>
-            <h2 class="text-lg font-bold text-zinc-900">Ваша корзина</h2>
+            <h2 class="text-lg font-bold text-zinc-900">{{ t('cart.title') }}</h2>
             <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-full">
-              {{ cartStore.itemsCount }} шт
+              {{ cartStore.itemsCount }} {{ t('cart.units') }}
             </span>
           </div>
           <button 
@@ -58,7 +58,7 @@
                 class="w-12 h-12 rounded-xl object-cover bg-zinc-100 flex-shrink-0"
               />
               <div class="min-w-0">
-                <h4 class="font-bold text-zinc-900 text-sm truncate">{{ item.name }}</h4>
+                <h4 class="font-bold text-zinc-900 text-sm truncate">{{ localizeField(item, 'name', langStore.locale) }}</h4>
                 <div class="text-xs text-amber-600 font-semibold mt-0.5">
                   {{ (item.price * item.quantity).toLocaleString('ko-KR') }} ₩
                 </div>
@@ -88,17 +88,17 @@
         <div class="p-4 bg-zinc-50 border-t border-zinc-100 space-y-3">
           <div class="space-y-1.5 text-sm">
             <div class="flex justify-between text-zinc-600">
-              <span>Стоимость блюд:</span>
+              <span>{{ t('cart.itemsCost') }}</span>
               <span class="font-semibold text-zinc-900">{{ cartStore.itemsTotal.toLocaleString('ko-KR') }} ₩</span>
             </div>
             <div class="flex justify-between text-zinc-600">
-              <span>Доставка:</span>
+              <span>{{ t('cart.delivery') }}</span>
               <span class="font-semibold text-zinc-900">
-                {{ cartStore.deliveryType === 'pickup' ? 'Бесплатно (Самовывоз)' : `${cartStore.currentDeliveryFee.toLocaleString('ko-KR')} ₩` }}
+                {{ cartStore.deliveryType === 'pickup' ? t('cart.free') : `${cartStore.currentDeliveryFee.toLocaleString('ko-KR')} ₩` }}
               </span>
             </div>
             <div class="flex justify-between text-base font-extrabold text-zinc-900 pt-1 border-t border-zinc-200">
-              <span>Итого:</span>
+              <span>{{ t('cart.total') }}</span>
               <span class="text-amber-600">{{ cartStore.grandTotal.toLocaleString('ko-KR') }} ₩</span>
             </div>
           </div>
@@ -107,7 +107,7 @@
             @click="$emit('checkout')"
             class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
-            <span>Перейти к оформлению</span>
+            <span>{{ t('cart.checkout') }}</span>
             <span>➔</span>
           </button>
         </div>
@@ -119,6 +119,7 @@
 <script setup>
 import { useCartStore } from '../stores/cart'
 import { resolveImageUrl } from '../config'
+import { useI18n, localizeField } from '../i18n'
 
 defineProps({
   isOpen: Boolean
@@ -127,4 +128,5 @@ defineProps({
 defineEmits(['close', 'checkout'])
 
 const cartStore = useCartStore()
+const { t, langStore } = useI18n()
 </script>

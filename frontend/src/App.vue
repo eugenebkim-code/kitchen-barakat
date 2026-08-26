@@ -6,10 +6,12 @@
   </div>
 
   <div class="min-h-screen font-sans antialiased text-zinc-900">
+    <LangSwitcher v-if="currentView !== 'admin'" />
+
     <!-- Initial Loading Screen -->
     <div v-if="userStore.isLoading" class="min-h-screen flex flex-col items-center justify-center space-y-4">
       <div class="animate-spin text-5xl drop-shadow-lg">🍳</div>
-      <p class="text-sm font-bold text-white drop-shadow-md">Загрузка Kitchen WebApp...</p>
+      <p class="text-sm font-bold text-white drop-shadow-md">{{ t('app.loading') }}</p>
     </div>
 
     <template v-else>
@@ -37,11 +39,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from './stores/user'
+import { useI18n } from './i18n'
 import MenuCatalogView from './views/MenuCatalogView.vue'
 import AdminDashboardView from './views/AdminDashboardView.vue'
 import OrderSuccessView from './views/OrderSuccessView.vue'
+import LangSwitcher from './components/LangSwitcher.vue'
 
 const userStore = useUserStore()
+const { t } = useI18n()
 const currentView = ref('catalog') // 'catalog' | 'admin' | 'success'
 const createdOrderId = ref(null)
 

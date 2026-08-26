@@ -6,8 +6,8 @@
         <div class="flex items-center gap-2.5">
           <img src="/images/logo-barakat.png" alt="Barakat Cafe" class="w-10 h-10 rounded-full object-cover shadow-md shadow-emerald-900/20" />
           <div>
-            <h1 class="font-extrabold text-zinc-900 text-lg leading-none tracking-tight">Кафе "БАРАКАТ"</h1>
-            <p class="text-xs text-zinc-500 mt-0.5">традиционная узбекская кухня в городе Дунпо, Корея</p>
+            <h1 class="font-extrabold text-zinc-900 text-lg leading-none tracking-tight">{{ t('menu.cafeName') }}</h1>
+            <p class="text-xs text-zinc-500 mt-0.5">{{ t('menu.cafeTagline') }}</p>
           </div>
         </div>
 
@@ -17,7 +17,7 @@
           @click="$emit('open-admin')"
           class="px-3 py-1.5 bg-zinc-900 hover:bg-black text-amber-400 font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-zinc-900/20 active:scale-95 transition-all"
         >
-          <span>⚙️ Админка</span>
+          <span>{{ t('menu.adminBadge') }}</span>
         </button>
 
         <!-- Dev Mode Toggle (в браузере без Telegram) -->
@@ -25,9 +25,9 @@
           v-else-if="isDevBrowser"
           @click="toggleDevAdmin"
           class="px-2.5 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold text-[11px] rounded-xl flex items-center gap-1"
-          title="Включить режим тестирования админки"
+          :title="t('menu.devAdminTitle')"
         >
-          <span>🧪 Тест Админки</span>
+          <span>{{ t('menu.devAdminBadge') }}</span>
         </button>
       </div>
 
@@ -47,9 +47,9 @@
               :class="userStore.isOpen ? 'bg-emerald-500' : 'bg-red-500'"
             ></span>
           </span>
-          <span>{{ userStore.isOpen ? 'Кухня открыта • Принимаем заказы' : `Кухня закрыта • Приём заказов с ${userStore.openTime} до ${userStore.closeTime}` }}</span>
+          <span>{{ userStore.isOpen ? t('menu.kitchenOpen') : t('menu.kitchenClosed', { open: userStore.openTime, close: userStore.closeTime }) }}</span>
         </div>
-        <span class="text-[10px] opacity-80 uppercase tracking-wider">KST (Корея)</span>
+        <span class="text-[10px] opacity-80 uppercase tracking-wider">{{ t('menu.kstLabel') }}</span>
       </div>
 
       <!-- Category Photo Slider -->
@@ -76,7 +76,7 @@
             class="text-[11px] font-bold text-center leading-tight line-clamp-2"
             :class="menuStore.activeCategoryId === cat.id ? 'text-amber-600' : 'text-zinc-600'"
           >
-            {{ cat.name }}
+            {{ localizeField(cat, 'name', langStore.locale) }}
           </span>
         </button>
       </div>
@@ -86,18 +86,18 @@
     <main class="max-w-lg mx-auto p-4">
       <div v-if="menuStore.isLoading" class="py-20 text-center space-y-3">
         <div class="animate-spin text-4xl drop-shadow-md">⏳</div>
-        <p class="text-sm text-white font-bold drop-shadow-md">Загружаем вкусное меню...</p>
+        <p class="text-sm text-white font-bold drop-shadow-md">{{ t('menu.loadingMenu') }}</p>
       </div>
 
       <div v-else-if="menuStore.error" class="py-12 text-center space-y-3">
         <p class="text-red-100 font-bold text-sm drop-shadow-md bg-red-600/80 backdrop-blur-sm inline-block px-4 py-2 rounded-xl">{{ menuStore.error }}</p>
         <button @click="menuStore.fetchMenu()" class="block mx-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-amber-500/30 active:scale-95 transition-all">
-          Повторить попытку
+          {{ t('menu.retry') }}
         </button>
       </div>
 
       <div v-else-if="currentCategoryItems.length === 0" class="py-12 text-center text-white font-semibold text-sm drop-shadow-md">
-        В этой категории пока нет блюд
+        {{ t('menu.emptyCategory') }}
       </div>
 
       <div v-else class="grid grid-cols-2 gap-3.5">
@@ -113,7 +113,7 @@
 
       <!-- Footer Credit -->
       <div class="mt-8 pb-4 text-center text-xs text-white/80 drop-shadow-md">
-        Сделано командой
+        {{ t('menu.footerCredit') }}
         <a
           href="https://mirae.team"
           target="_blank"
@@ -122,7 +122,7 @@
         >
           Mirae Team
         </a>
-        • Корея, 2026
+        • {{ t('menu.footerCountry') }}
       </div>
     </main>
 
@@ -134,7 +134,7 @@
       >
         <div class="flex items-center gap-2.5">
           <span class="bg-white/20 px-2.5 py-1 rounded-xl text-xs">🛒 {{ cartStore.itemsCount }}</span>
-          <span class="text-sm">Посмотреть корзину</span>
+          <span class="text-sm">{{ t('menu.viewCart') }}</span>
         </div>
         <span class="text-base font-extrabold">{{ cartStore.grandTotal.toLocaleString('ko-KR') }} ₩</span>
       </button>
@@ -162,6 +162,7 @@ import { useUserStore } from '../stores/user'
 import { useMenuStore } from '../stores/menu'
 import { useCartStore } from '../stores/cart'
 import { resolveImageUrl } from '../config'
+import { useI18n, localizeField } from '../i18n'
 import MenuItemCard from '../components/MenuItemCard.vue'
 import CartDrawer from '../components/CartDrawer.vue'
 import CheckoutModal from '../components/CheckoutModal.vue'
@@ -171,6 +172,7 @@ const emit = defineEmits(['open-admin', 'order-created'])
 const userStore = useUserStore()
 const menuStore = useMenuStore()
 const cartStore = useCartStore()
+const { t, langStore } = useI18n()
 
 const isCartDrawerOpen = ref(false)
 const isCheckoutModalOpen = ref(false)
@@ -195,7 +197,7 @@ function getCartQuantity(dishId) {
 
 function openCheckoutModal() {
   if (!userStore.isOpen) {
-    alert('Извините, кухня временно закрыта и не принимает заказы.')
+    alert(t('menu.kitchenClosedAlert'))
     return
   }
   isCartDrawerOpen.value = false

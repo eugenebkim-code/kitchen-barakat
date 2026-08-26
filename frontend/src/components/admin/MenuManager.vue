@@ -59,12 +59,20 @@
             <span v-else class="text-xl text-zinc-400">📷</span>
           </div>
           <input ref="categoryFileInput" type="file" accept="image/*" class="hidden" @change="handleCategoryFileChange" />
-          <input
-            v-model="categoryForm.name"
-            type="text"
-            placeholder="Название категории"
-            class="flex-1 px-3 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
-          />
+          <div class="flex-1 space-y-2">
+            <input
+              v-model="categoryForm.name"
+              type="text"
+              placeholder="Название категории (RU)"
+              class="w-full px-3 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <input
+              v-model="categoryForm.name_ko"
+              type="text"
+              placeholder="이름 (KO)"
+              class="w-full px-3 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
         </div>
 
         <p v-if="categoryError" class="text-xs text-red-600 font-bold">{{ categoryError }}</p>
@@ -122,7 +130,13 @@
             <input
               v-model="itemForm.name"
               type="text"
-              placeholder="Название блюда"
+              placeholder="Название блюда (RU)"
+              class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <input
+              v-model="itemForm.name_ko"
+              type="text"
+              placeholder="이름 (KO)"
               class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <input
@@ -137,7 +151,14 @@
         <textarea
           v-model="itemForm.description"
           rows="2"
-          placeholder="Описание"
+          placeholder="Описание (RU)"
+          class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
+        ></textarea>
+
+        <textarea
+          v-model="itemForm.description_ko"
+          rows="2"
+          placeholder="설명 (KO)"
           class="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500"
         ></textarea>
 
@@ -257,7 +278,7 @@ async function fetchMenu() {
 
 // --- Category form ---
 const showCategoryForm = ref(false)
-const categoryForm = reactive({ id: null, name: '', sort_order: 0 })
+const categoryForm = reactive({ id: null, name: '', name_ko: '', sort_order: 0 })
 const categoryFile = ref(null)
 const categoryPreview = ref('')
 const categoryFileInput = ref(null)
@@ -267,6 +288,7 @@ const categoryError = ref('')
 function openCreateCategory() {
   categoryForm.id = null
   categoryForm.name = ''
+  categoryForm.name_ko = ''
   categoryForm.sort_order = categories.value.length
   categoryFile.value = null
   categoryPreview.value = ''
@@ -277,6 +299,7 @@ function openCreateCategory() {
 function openEditCategory(cat) {
   categoryForm.id = cat.id
   categoryForm.name = cat.name
+  categoryForm.name_ko = cat.name_ko || ''
   categoryForm.sort_order = cat.sort_order
   categoryFile.value = null
   categoryPreview.value = cat.image_url ? resolveImageUrl(cat.image_url) : ''
@@ -300,6 +323,7 @@ async function saveCategory() {
   try {
     const formData = new FormData()
     formData.append('name', categoryForm.name.trim())
+    formData.append('name_ko', categoryForm.name_ko?.trim() || '')
     formData.append('sort_order', String(categoryForm.sort_order ?? 0))
     if (categoryFile.value) formData.append('image', categoryFile.value)
 
@@ -354,7 +378,7 @@ async function deleteCategory() {
 
 // --- Item form ---
 const showItemForm = ref(false)
-const itemForm = reactive({ id: null, category_id: null, name: '', description: '', price: null, is_available: true })
+const itemForm = reactive({ id: null, category_id: null, name: '', name_ko: '', description: '', description_ko: '', price: null, is_available: true })
 const itemFile = ref(null)
 const itemPreview = ref('')
 const itemFileInput = ref(null)
@@ -366,7 +390,9 @@ function openCreateItem() {
   itemForm.id = null
   itemForm.category_id = categories.value[0].id
   itemForm.name = ''
+  itemForm.name_ko = ''
   itemForm.description = ''
+  itemForm.description_ko = ''
   itemForm.price = null
   itemForm.is_available = true
   itemFile.value = null
@@ -379,7 +405,9 @@ function openEditItem(item, categoryId) {
   itemForm.id = item.id
   itemForm.category_id = item.category_id ?? categoryId
   itemForm.name = item.name
+  itemForm.name_ko = item.name_ko || ''
   itemForm.description = item.description || ''
+  itemForm.description_ko = item.description_ko || ''
   itemForm.price = item.price
   itemForm.is_available = item.is_available
   itemFile.value = null
@@ -404,8 +432,10 @@ async function saveItem() {
   try {
     const formData = new FormData()
     formData.append('name', itemForm.name.trim())
+    formData.append('name_ko', itemForm.name_ko?.trim() || '')
     formData.append('price', String(itemForm.price))
     formData.append('description', itemForm.description || '')
+    formData.append('description_ko', itemForm.description_ko || '')
     formData.append('is_available', String(itemForm.is_available))
     if (itemForm.category_id != null) formData.append('category_id', String(itemForm.category_id))
     if (itemFile.value) formData.append('image', itemFile.value)

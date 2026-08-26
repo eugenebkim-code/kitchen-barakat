@@ -18,10 +18,10 @@
     <div class="p-3.5 flex-1 flex flex-col justify-between">
       <div>
         <h3 class="font-bold text-zinc-900 text-sm leading-tight line-clamp-1 mb-1">
-          {{ item.name }}
+          {{ localizeField(item, 'name', langStore.locale) }}
         </h3>
         <p v-if="item.description" class="text-xs text-zinc-500 line-clamp-3 mb-2 leading-relaxed">
-          {{ item.description }}
+          {{ localizeField(item, 'description', langStore.locale) }}
         </p>
       </div>
 
@@ -56,7 +56,7 @@
             class="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs rounded-xl shadow-md shadow-amber-500/30 active:scale-95 transition-all flex items-center gap-1"
           >
             <span>+</span>
-            <span>В корзину</span>
+            <span>{{ t('item.addToCart') }}</span>
           </button>
         </div>
       </div>
@@ -66,6 +66,9 @@
 
 <script setup>
 import { resolveImageUrl } from '../config'
+import { useI18n, localizeField } from '../i18n'
+
+const { t, langStore } = useI18n()
 
 defineProps({
   item: {

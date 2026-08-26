@@ -25,7 +25,9 @@ async def get_menu(db: AsyncSession = Depends(get_db)):
             {
                 "id": item.id,
                 "name": item.name,
+                "name_ko": item.name_ko,
                 "description": item.description,
+                "description_ko": item.description_ko,
                 "price": item.price,
                 "image_url": item.image_url,
                 "is_available": item.is_available,
@@ -36,6 +38,7 @@ async def get_menu(db: AsyncSession = Depends(get_db)):
         menu_response.append({
             "id": cat.id,
             "name": cat.name,
+            "name_ko": cat.name_ko,
             "sort_order": cat.sort_order,
             "image_url": cat.image_url,
             "items": items

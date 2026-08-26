@@ -27,6 +27,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String(64), nullable=False)
+    name_ko = Column(String(64), nullable=True)
     sort_order = Column(Integer, default=0)
     image_url = Column(Text, nullable=True)
 
@@ -39,7 +40,9 @@ class MenuItem(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True)
     name = Column(String(128), nullable=False)
+    name_ko = Column(String(128), nullable=True)
     description = Column(Text, nullable=True)
+    description_ko = Column(Text, nullable=True)
     price = Column(Integer, nullable=False)  # in KRW (₩)
     image_url = Column(Text, nullable=True)
     is_available = Column(Boolean, default=True)

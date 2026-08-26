@@ -1,0 +1,167 @@
+export const translations = {
+  ru: {
+    app: {
+      loading: 'Загрузка Kitchen WebApp...'
+    },
+    menu: {
+      cafeName: 'Кафе "БАРАКАТ"',
+      cafeTagline: 'традиционная узбекская кухня в городе Дунпо, Корея',
+      adminBadge: '⚙️ Админка',
+      devAdminBadge: '🧪 Тест Админки',
+      devAdminTitle: 'Включить режим тестирования админки',
+      kitchenOpen: 'Кухня открыта • Принимаем заказы',
+      kitchenClosed: 'Кухня закрыта • Приём заказов с {open} до {close}',
+      kstLabel: 'KST (Корея)',
+      loadingMenu: 'Загружаем вкусное меню...',
+      retry: 'Повторить попытку',
+      emptyCategory: 'В этой категории пока нет блюд',
+      viewCart: 'Посмотреть корзину',
+      kitchenClosedAlert: 'Извините, кухня временно закрыта и не принимает заказы.',
+      footerCredit: 'Сделано командой',
+      footerCountry: 'Корея, 2026'
+    },
+    item: {
+      addToCart: 'В корзину'
+    },
+    cart: {
+      title: 'Ваша корзина',
+      units: 'шт',
+      itemsCost: 'Стоимость блюд:',
+      delivery: 'Доставка:',
+      free: 'Бесплатно (Самовывоз)',
+      total: 'Итого:',
+      checkout: 'Перейти к оформлению'
+    },
+    checkout: {
+      title: 'Оформление заказа',
+      infoAriaLabel: 'Как сделать заказ',
+      infoTitle: 'Как сделать заказ',
+      infoStep1: 'Укажите номер телефона.',
+      infoStep2: 'Выберите способ получения — доставка или самовывоз.',
+      infoStep3: 'Если доставка — укажите адрес; к сумме заказа добавится фиксированная стоимость доставки.',
+      infoStep4: 'Переведите оплату на счёт владельца (Тонджанг) по реквизитам ниже.',
+      infoStep5: 'Прикрепите скриншот перевода из банковского приложения или фото чека с банкомата.',
+      infoStep6: 'Нажмите «Подтвердить и отправить» — заказ сразу уйдёт на кухню в работу.',
+      delivery: '🛵 Доставка',
+      pickup: '🛍️ Самовывоз',
+      phoneLabel: 'Телефон в Корее',
+      phonePlaceholder: '010-XXXX-XXXX',
+      addressLabel: 'Адрес доставки',
+      addressPlaceholder: 'Город, улица, дом, квартира/офис (на корейском или русском)',
+      commentLabel: 'Комментарий к заказу',
+      commentPlaceholder: 'Код домофона, острота и т.д.',
+      requisitesTitle: 'Реквизиты для перевода',
+      bankTransfer: 'Банковский перевод',
+      bank: 'Банк:',
+      account: 'Счет:',
+      copied: 'Скопировано!',
+      copy: 'Копировать',
+      holder: 'Получатель:',
+      amountToPay: 'Сумма к оплате:',
+      receiptLabel: 'Скриншот перевода',
+      receiptUploaded: 'Скриншот загружен ✓',
+      tapToReplace: 'Нажмите, чтобы заменить',
+      uploadReceipt: 'Загрузить скриншот чека',
+      fileHint: 'JPG, PNG до 10 МБ',
+      sending: 'Отправка заказа...',
+      submit: 'Подтвердить и отправить',
+      errorPhoneRequired: 'Введите номер телефона',
+      errorPhoneFormat: 'Номер должен начинаться с 010 и содержать 11 цифр',
+      errorAddressRequired: 'Укажите адрес доставки',
+      errorReceiptRequired: 'Прикрепите скриншот подтверждения перевода',
+      errorSubmitFailed: 'Ошибка при отправке заказа',
+      errorSubmitGeneric: 'Не удалось отправить заказ'
+    },
+    success: {
+      title: 'Заказ успешно создан!',
+      status: 'Статус: На проверке администратора',
+      description: 'Мы уже получили ваш заказ и проверяем подтверждение оплаты. Скоро кухня приступит к приготовлению!',
+      orderNumber: 'Номер заказа:',
+      createdAt: 'Время создания:',
+      backToMenu: 'Вернуться в меню'
+    }
+  },
+
+  ko: {
+    app: {
+      loading: 'Kitchen WebApp 로딩 중...'
+    },
+    menu: {
+      cafeName: '카페 "바라카트"',
+      cafeTagline: '대한민국 둔포의 전통 우즈벡 요리',
+      adminBadge: '⚙️ 관리자',
+      devAdminBadge: '🧪 관리자 테스트',
+      devAdminTitle: '관리자 테스트 모드 켜기',
+      kitchenOpen: '주방 영업 중 • 주문 가능',
+      kitchenClosed: '주방 마감 • 주문 접수 시간 {open}~{close}',
+      kstLabel: 'KST (한국 시간)',
+      loadingMenu: '맛있는 메뉴를 불러오는 중...',
+      retry: '다시 시도',
+      emptyCategory: '이 카테고리에는 아직 메뉴가 없습니다',
+      viewCart: '장바구니 보기',
+      kitchenClosedAlert: '죄송합니다. 주방이 현재 영업하지 않아 주문을 받을 수 없습니다.',
+      footerCredit: '제작:',
+      footerCountry: '대한민국, 2026'
+    },
+    item: {
+      addToCart: '담기'
+    },
+    cart: {
+      title: '장바구니',
+      units: '개',
+      itemsCost: '메뉴 금액:',
+      delivery: '배달비:',
+      free: '무료 (포장 픽업)',
+      total: '총 합계:',
+      checkout: '주문하기'
+    },
+    checkout: {
+      title: '주문서 작성',
+      infoAriaLabel: '주문 방법',
+      infoTitle: '주문하는 방법',
+      infoStep1: '전화번호를 입력하세요.',
+      infoStep2: '수령 방법을 선택하세요 — 배달 또는 포장 픽업.',
+      infoStep3: '배달을 선택한 경우 주소를 입력하세요. 주문 금액에 고정 배달비가 추가됩니다.',
+      infoStep4: '아래 계좌 정보로 사장님(대표자) 통장에 결제 금액을 이체하세요.',
+      infoStep5: '은행 앱 이체 화면 캡처 또는 ATM 영수증 사진을 첨부하세요.',
+      infoStep6: '「확인하고 보내기」를 누르면 주문이 바로 주방으로 전달됩니다.',
+      delivery: '🛵 배달',
+      pickup: '🛍️ 포장 픽업',
+      phoneLabel: '한국 전화번호',
+      phonePlaceholder: '010-XXXX-XXXX',
+      addressLabel: '배달 주소',
+      addressPlaceholder: '도시, 도로명, 건물, 호수 (한국어 또는 러시아어)',
+      commentLabel: '주문 메모',
+      commentPlaceholder: '공동현관 비밀번호, 맵기 정도 등',
+      requisitesTitle: '이체 계좌 정보',
+      bankTransfer: '계좌 이체',
+      bank: '은행:',
+      account: '계좌번호:',
+      copied: '복사됨!',
+      copy: '복사',
+      holder: '예금주:',
+      amountToPay: '결제 금액:',
+      receiptLabel: '이체 확인 스크린샷',
+      receiptUploaded: '스크린샷 업로드됨 ✓',
+      tapToReplace: '탭하여 변경',
+      uploadReceipt: '영수증 스크린샷 업로드',
+      fileHint: 'JPG, PNG 최대 10MB',
+      sending: '주문 전송 중...',
+      submit: '확인하고 보내기',
+      errorPhoneRequired: '전화번호를 입력하세요',
+      errorPhoneFormat: '번호는 010으로 시작하는 11자리여야 합니다',
+      errorAddressRequired: '배달 주소를 입력하세요',
+      errorReceiptRequired: '이체 확인 스크린샷을 첨부하세요',
+      errorSubmitFailed: '주문 전송 중 오류가 발생했습니다',
+      errorSubmitGeneric: '주문을 보내지 못했습니다'
+    },
+    success: {
+      title: '주문이 완료되었습니다!',
+      status: '상태: 관리자 확인 중',
+      description: '주문이 정상적으로 접수되었으며 결제 확인 중입니다. 곧 주방에서 조리를 시작합니다!',
+      orderNumber: '주문 번호:',
+      createdAt: '주문 시간:',
+      backToMenu: '메뉴로 돌아가기'
+    }
+  }
+}

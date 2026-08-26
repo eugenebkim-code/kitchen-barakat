@@ -38,6 +38,7 @@ export const useCartStore = defineStore('cart', {
         this.items.push({
           id: dish.id,
           name: dish.name,
+          name_ko: dish.name_ko,
           price: dish.price,
           quantity: 1,
           image_url: dish.image_url

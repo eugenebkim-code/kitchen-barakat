@@ -56,13 +56,14 @@ async def admin_get_menu(
 @router.post("/menu/categories", response_model=CategoryOut)
 async def create_category(
     name: str = Form(...),
+    name_ko: Optional[str] = Form(None),
     sort_order: int = Form(0),
     image: Optional[UploadFile] = File(None),
     admin: dict = Depends(verify_admin),
     db: AsyncSession = Depends(get_db)
 ):
     image_url = await save_image(image, "category") if image else None
-    category = Category(name=name, sort_order=sort_order, image_url=image_url)
+    category = Category(name=name, name_ko=name_ko or None, sort_order=sort_order, image_url=image_url)
     db.add(category)
     await db.commit()
     await db.refresh(category)
@@ -73,6 +74,7 @@ async def create_category(
 async def update_category(
     category_id: int,
     name: Optional[str] = Form(None),
+    name_ko: Optional[str] = Form(None),
     sort_order: Optional[int] = Form(None),
     image: Optional[UploadFile] = File(None),
     admin: dict = Depends(verify_admin),
@@ -87,6 +89,8 @@ async def update_category(
 
     if name is not None:
         category.name = name
+    if name_ko is not None:
+        category.name_ko = name_ko or None
     if sort_order is not None:
         category.sort_order = sort_order
     if image is not None:
@@ -100,9 +104,11 @@ async def update_category(
 @router.post("/menu/items", response_model=MenuItemOut)
 async def create_menu_item(
     name: str = Form(...),
+    name_ko: Optional[str] = Form(None),
     price: int = Form(...),
     category_id: Optional[int] = Form(None),
     description: Optional[str] = Form(None),
+    description_ko: Optional[str] = Form(None),
     is_available: bool = Form(True),
     image: Optional[UploadFile] = File(None),
     admin: dict = Depends(verify_admin),
@@ -112,7 +118,9 @@ async def create_menu_item(
     item = MenuItem(
         category_id=category_id,
         name=name,
+        name_ko=name_ko or None,
         description=description,
+        description_ko=description_ko or None,
         price=price,
         image_url=image_url,
         is_available=is_available,
@@ -127,9 +135,11 @@ async def create_menu_item(
 async def update_menu_item(
     item_id: int,
     name: Optional[str] = Form(None),
+    name_ko: Optional[str] = Form(None),
     price: Optional[int] = Form(None),
     category_id: Optional[int] = Form(None),
     description: Optional[str] = Form(None),
+    description_ko: Optional[str] = Form(None),
     is_available: Optional[bool] = Form(None),
     image: Optional[UploadFile] = File(None),
     admin: dict = Depends(verify_admin),
@@ -144,12 +154,16 @@ async def update_menu_item(
 
     if name is not None:
         item.name = name
+    if name_ko is not None:
+        item.name_ko = name_ko or None
     if price is not None:
         item.price = price
     if category_id is not None:
         item.category_id = category_id
     if description is not None:
         item.description = description
+    if description_ko is not None:
+        item.description_ko = description_ko or None
     if is_available is not None:
         item.is_available = is_available
     if image is not None:

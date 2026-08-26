@@ -12,7 +12,7 @@
           <!-- Modal Header -->
           <div class="p-4 border-b border-zinc-100 flex items-center justify-between bg-gradient-to-r from-amber-50/70 to-transparent">
             <div class="flex items-center gap-2">
-              <h2 class="text-lg font-bold text-zinc-900">Оформление заказа</h2>
+              <h2 class="text-lg font-bold text-zinc-900">{{ t('checkout.title') }}</h2>
               <span class="relative inline-flex w-6 h-6">
                 <span
                   v-if="!infoSeen"
@@ -21,7 +21,7 @@
                 <button
                   type="button"
                   @click="toggleInfo"
-                  aria-label="Как сделать заказ"
+                  :aria-label="t('checkout.infoAriaLabel')"
                   class="relative w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition-colors"
                   :class="showInfo ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-700 hover:bg-amber-200'"
                 >
@@ -43,14 +43,14 @@
               leave-to-class="opacity-0"
             >
               <div v-if="showInfo" class="bg-sky-50 border border-sky-200 rounded-2xl p-4 text-sm text-sky-900 space-y-2">
-                <p class="font-bold text-sky-800">Как сделать заказ</p>
+                <p class="font-bold text-sky-800">{{ t('checkout.infoTitle') }}</p>
                 <ol class="list-decimal list-inside space-y-1.5 leading-snug">
-                  <li>Укажите номер телефона.</li>
-                  <li>Выберите способ получения — доставка или самовывоз.</li>
-                  <li>Если доставка — укажите адрес; к сумме заказа добавится фиксированная стоимость доставки.</li>
-                  <li>Переведите оплату на счёт владельца (Тонджанг) по реквизитам ниже.</li>
-                  <li>Прикрепите скриншот перевода из банковского приложения или фото чека с банкомата.</li>
-                  <li>Нажмите «Подтвердить и отправить» — заказ сразу уйдёт на кухню в работу.</li>
+                  <li>{{ t('checkout.infoStep1') }}</li>
+                  <li>{{ t('checkout.infoStep2') }}</li>
+                  <li>{{ t('checkout.infoStep3') }}</li>
+                  <li>{{ t('checkout.infoStep4') }}</li>
+                  <li>{{ t('checkout.infoStep5') }}</li>
+                  <li>{{ t('checkout.infoStep6') }}</li>
                 </ol>
               </div>
             </Transition>
@@ -63,28 +63,28 @@
                 class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"
                 :class="form.deliveryType === 'delivery' ? 'bg-white text-amber-600 shadow-sm' : 'text-zinc-500'"
               >
-                <span>🛵 Доставка</span>
+                <span>{{ t('checkout.delivery') }}</span>
               </button>
-              <button 
+              <button
                 type="button"
-                @click="setDeliveryType('pickup')" 
+                @click="setDeliveryType('pickup')"
                 class="flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5"
                 :class="form.deliveryType === 'pickup' ? 'bg-white text-amber-600 shadow-sm' : 'text-zinc-500'"
               >
-                <span>🛍️ Самовывоз</span>
+                <span>{{ t('checkout.pickup') }}</span>
               </button>
             </div>
 
             <!-- 2. Phone Input (Korean Format Validation) -->
             <div>
               <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
-                Телефон в Корее <span class="text-red-500">*</span>
+                {{ t('checkout.phoneLabel') }} <span class="text-red-500">*</span>
               </label>
-              <input 
+              <input
                 type="tel"
                 v-model="form.phone"
                 @input="formatKoreanPhone"
-                placeholder="010-XXXX-XXXX"
+                :placeholder="t('checkout.phonePlaceholder')"
                 maxlength="13"
                 class="w-full px-4 py-3 bg-zinc-50 border rounded-xl text-zinc-900 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
                 :class="phoneError ? 'border-red-500 bg-red-50/30' : 'border-zinc-200'"
@@ -95,12 +95,12 @@
             <!-- 3. Delivery Address Input -->
             <div v-if="form.deliveryType === 'delivery'">
               <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
-                Адрес доставки <span class="text-red-500">*</span>
+                {{ t('checkout.addressLabel') }} <span class="text-red-500">*</span>
               </label>
-              <textarea 
+              <textarea
                 v-model="form.address"
                 rows="2"
-                placeholder="Город, улица, дом, квартира/офис (на корейском или русском)"
+                :placeholder="t('checkout.addressPlaceholder')"
                 class="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
               ></textarea>
             </div>
@@ -108,12 +108,12 @@
             <!-- Comment -->
             <div>
               <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
-                Комментарий к заказу
+                {{ t('checkout.commentLabel') }}
               </label>
-              <input 
+              <input
                 type="text"
                 v-model="form.comment"
-                placeholder="Код домофона, острота и т.д."
+                :placeholder="t('checkout.commentPlaceholder')"
                 class="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
               />
             </div>
@@ -121,17 +121,17 @@
             <!-- 4. Bank Account Payment Details -->
             <div class="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200/80 rounded-2xl p-4 space-y-3 shadow-sm">
               <div class="flex items-center justify-between border-b border-amber-200/50 pb-2">
-                <span class="text-xs font-bold text-amber-900 uppercase">Реквизиты для перевода</span>
-                <span class="text-xs text-amber-700 font-medium">Банковский перевод</span>
+                <span class="text-xs font-bold text-amber-900 uppercase">{{ t('checkout.requisitesTitle') }}</span>
+                <span class="text-xs text-amber-700 font-medium">{{ t('checkout.bankTransfer') }}</span>
               </div>
 
               <div class="space-y-1 text-sm">
                 <div class="flex justify-between">
-                  <span class="text-zinc-600">Банк:</span>
+                  <span class="text-zinc-600">{{ t('checkout.bank') }}</span>
                   <span class="font-bold text-zinc-900">{{ userStore.bankDetails.bank }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-zinc-600">Счет:</span>
+                  <span class="text-zinc-600">{{ t('checkout.account') }}</span>
                   <div class="flex items-center gap-2">
                     <span class="font-extrabold text-zinc-900 font-mono">{{ userStore.bankDetails.account }}</span>
                     <button
@@ -139,16 +139,16 @@
                       @click="copyAccount"
                       class="px-2 py-0.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs rounded-lg shadow-sm shadow-amber-500/30 active:scale-95 transition-all"
                     >
-                      {{ isCopied ? 'Скопировано!' : 'Копировать' }}
+                      {{ isCopied ? t('checkout.copied') : t('checkout.copy') }}
                     </button>
                   </div>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-zinc-600">Получатель:</span>
+                  <span class="text-zinc-600">{{ t('checkout.holder') }}</span>
                   <span class="font-bold text-zinc-900">{{ userStore.bankDetails.holder }}</span>
                 </div>
                 <div class="flex justify-between pt-2 border-t border-amber-200/50 text-base font-extrabold text-amber-900">
-                  <span>Сумма к оплате:</span>
+                  <span>{{ t('checkout.amountToPay') }}</span>
                   <span class="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">{{ cartStore.grandTotal.toLocaleString('ko-KR') }} ₩</span>
                 </div>
               </div>
@@ -157,7 +157,7 @@
             <!-- 5. Payment Screenshot Upload -->
             <div>
               <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1">
-                Скриншот перевода <span class="text-red-500">*</span>
+                {{ t('checkout.receiptLabel') }} <span class="text-red-500">*</span>
               </label>
 
               <div 
@@ -177,15 +177,15 @@
                   <img :src="receiptPreview" class="h-20 w-20 object-cover rounded-xl border border-zinc-200 shadow-sm" />
                   <div class="text-left flex-1 min-w-0">
                     <p class="text-xs font-bold text-zinc-900 truncate">{{ selectedFile?.name }}</p>
-                    <p class="text-xs text-amber-600 font-semibold mt-0.5">Скриншот загружен ✓</p>
-                    <p class="text-[11px] text-zinc-400 mt-1">Нажмите, чтобы заменить</p>
+                    <p class="text-xs text-amber-600 font-semibold mt-0.5">{{ t('checkout.receiptUploaded') }}</p>
+                    <p class="text-[11px] text-zinc-400 mt-1">{{ t('checkout.tapToReplace') }}</p>
                   </div>
                 </div>
 
                 <div v-else class="space-y-1">
                   <span class="text-2xl">📸</span>
-                  <p class="text-xs font-bold text-zinc-700">Загрузить скриншот чека</p>
-                  <p class="text-[11px] text-zinc-400">JPG, PNG до 10 МБ</p>
+                  <p class="text-xs font-bold text-zinc-700">{{ t('checkout.uploadReceipt') }}</p>
+                  <p class="text-[11px] text-zinc-400">{{ t('checkout.fileHint') }}</p>
                 </div>
               </div>
             </div>
@@ -204,7 +204,7 @@
               class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-zinc-300 disabled:to-zinc-300 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
             >
               <span v-if="isSubmitting" class="animate-spin text-lg">⏳</span>
-              <span>{{ isSubmitting ? 'Отправка заказа...' : 'Подтвердить и отправить' }}</span>
+              <span>{{ isSubmitting ? t('checkout.sending') : t('checkout.submit') }}</span>
             </button>
           </div>
 
@@ -219,6 +219,7 @@ import { ref, reactive, watch, onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useCartStore } from '../stores/cart'
 import { API_BASE } from '../config'
+import { useI18n } from '../i18n'
 
 const props = defineProps({
   isOpen: Boolean
@@ -228,6 +229,7 @@ const emit = defineEmits(['close', 'success'])
 
 const userStore = useUserStore()
 const cartStore = useCartStore()
+const { t } = useI18n()
 
 const fileInput = ref(null)
 const selectedFile = ref(null)
@@ -288,11 +290,11 @@ function formatKoreanPhone() {
 function validatePhone() {
   const cleaned = form.phone.replace(/\D/g, '')
   if (!cleaned) {
-    phoneError.value = 'Введите номер телефона'
+    phoneError.value = t('checkout.errorPhoneRequired')
     return false
   }
   if (!cleaned.startsWith('010') || cleaned.length !== 11) {
-    phoneError.value = 'Номер должен начинаться с 010 и содержать 11 цифр'
+    phoneError.value = t('checkout.errorPhoneFormat')
     return false
   }
   phoneError.value = ''
@@ -326,12 +328,12 @@ async function submitOrder() {
   if (!validatePhone()) return
 
   if (form.deliveryType === 'delivery' && !form.address.trim()) {
-    submitError.value = 'Укажите адрес доставки'
+    submitError.value = t('checkout.errorAddressRequired')
     return
   }
 
   if (!selectedFile.value) {
-    submitError.value = 'Прикрепите скриншот подтверждения перевода'
+    submitError.value = t('checkout.errorReceiptRequired')
     return
   }
 
@@ -362,7 +364,7 @@ async function submitOrder() {
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}))
-      throw new Error(errData.detail || 'Ошибка при отправке заказа')
+      throw new Error(errData.detail || t('checkout.errorSubmitFailed'))
     }
 
     const result = await response.json()
@@ -378,7 +380,7 @@ async function submitOrder() {
     emit('success', result.order_id)
   } catch (err) {
     console.error('Submit order error:', err)
-    submitError.value = err.message || 'Не удалось отправить заказ'
+    submitError.value = err.message || t('checkout.errorSubmitGeneric')
   } finally {
     isSubmitting.value = false
   }
