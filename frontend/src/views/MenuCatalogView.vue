@@ -110,6 +110,20 @@
           @remove="cartStore.removeItem"
         />
       </div>
+
+      <!-- Footer Credit -->
+      <div class="mt-8 pb-4 text-center text-xs text-white/80 drop-shadow-md">
+        Сделано командой
+        <a
+          href="https://mirae.team"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-bold text-amber-300 hover:text-amber-200 underline underline-offset-2"
+        >
+          Mirae Team
+        </a>
+        • Корея, 2026
+      </div>
     </main>
 
     <!-- Floating Sticky Cart Bar Button -->
