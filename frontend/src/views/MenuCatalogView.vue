@@ -112,7 +112,7 @@
       </div>
 
       <!-- Footer Credit -->
-      <div class="mt-8 pb-4 text-center text-xs text-white/80 drop-shadow-md">
+      <div class="mt-8 pb-[max(1rem,env(safe-area-inset-bottom))] text-center text-xs text-white/80 drop-shadow-md">
         {{ t('menu.footerCredit') }}
         <a
           href="https://mirae.team"
